@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git-Commit-to-Changelog Pipeline – WebBeds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a2e; --mid: #4a4a6a; --soft: #7a7a9a;
+    --accent: #2563eb; --accent2: #7c3aed;
+    --bg: #ffffff; --surface: #f8f8fc; --border: #e4e4f0;
+    --warn: #dc2626; --ok: #16a34a; --amber: #d97706;
+    --radius: 8px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+  html { font-size: 15px; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 2.8rem 0 .75rem; padding-bottom: .4rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .5rem; }
+  h4 { font-size: .93rem; font-weight: 600; color: var(--mid); margin: 1.2rem 0 .3rem; }
+  p  { margin-bottom: .9rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+  li { margin-bottom: .3rem; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .82rem; background: #f0f0f8; padding: .15em .4em; border-radius: 4px; color: var(--accent2); }
+  pre { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 1.2rem 1.4rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; margin: 1rem 0 1.4rem; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Cover */
+  .cover { display: flex; flex-direction: column; min-height: 260px; justify-content: flex-end; border-bottom: 3px solid var(--accent); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  .cover-subtitle { font-size: 1.1rem; color: var(--mid); margin-top: .5rem; max-width: 600px; line-height: 1.5; }
+  .cover-meta { margin-top: 1.6rem; font-size: .82rem; color: var(--soft); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cover-meta span strong { color: var(--mid); }
+
+  /* Callouts */
+  .callout { border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+  .callout.warn  { border-color: var(--warn); }
+  .callout.ok    { border-color: var(--ok); }
+  .callout.amber { border-color: var(--amber); }
+  .callout p { margin: 0; font-size: .92rem; }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; color: var(--accent); }
+  .callout.warn .callout-label  { color: var(--warn); }
+  .callout.ok .callout-label    { color: var(--ok); }
+  .callout.amber .callout-label { color: var(--amber); }
+
+  /* Badge */
+  .badge { display: inline-flex; align-items: center; padding: .2em .65em; border-radius: 999px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .badge-p1 { background: #fee2e2; color: var(--warn); }
+  .badge-p2 { background: #fef3c7; color: #92400e; }
+  .badge-p3 { background: #ecfdf5; color: #065f46; }
+
+  .nav-link { display: inline-block; margin-top: 2rem; }
+  .nav-link a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: .9rem; }
+  .nav-link a:hover { text-decoration: underline; }
+
+  .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+
+  @media print {
+    body { padding: 20px 24px 40px; font-size: 13px; }
+    .cover { min-height: auto; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Agentic Skill — Documentation Generation</div>
+  <h1>Git-Commit-to-Changelog Pipeline</h1>
+  <p class="cover-subtitle">Automatically generate release notes and changelogs by parsing Git commit history using the Conventional Commits standard, grouping changes by type.</p>
+  <div class="cover-meta">
+    <span><strong>Skill Name:</strong> <code>changelog-automator</code></span>
+    <span><strong>Priority:</strong> <span class="badge badge-p1">P1</span></span>
+    <span><strong>Timeline:</strong> Month 2 (Phase 1)</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<h2>How It Works</h2>
+
+<ol>
+  <li>Skill monitors Git repositories for new commits and PR merges</li>
+  <li>Parses commit messages following the Conventional Commits standard</li>
+  <li>Groups changes by type (features, fixes, breaking changes, deprecations, etc.)</li>
+  <li>Uses AI to generate human-readable release notes and summaries</li>
+  <li>Publishes changelog to Confluence and GitHub releases</li>
+</ol>
+
+<!-- EXAMPLE OUTPUT -->
+<h2>Example Output</h2>
+
+<h3>Input</h3>
+<p>Git commits from <code>v2.0.0</code> to <code>v2.1.0</code> tag</p>
+
+<h3>Generated Output</h3>
+
+<pre><code># WebBeds Platform v2.1.0 Release Notes
+
+## 🚀 New Features
+- **Multi-currency booking support**: Customers can now book in EUR, GBP, USD (#1234)
+- **Advanced filtering**: Added room capacity and amenities filters to search API (#1245)
+
+## 🐛 Bug Fixes
+- Fixed incorrect tax calculation for Swiss hotels (#1250)
+- Resolved timeout issue in availability API for large requests (#1260)
+
+## ⚠️ Breaking Changes
+- `/api/v1/search` endpoint deprecated, use `/api/v2/search` instead (#1270)
+
+## 📦 Dependencies
+- Upgraded Python to 3.11
+- Updated requests library to 2.31.0</code></pre>
+
+<!-- BENEFITS -->
+<h2>Benefits</h2>
+
+<div class="callout ok">
+  <div class="callout-label">Key Outcomes</div>
+  <p><strong>Release notes generated automatically from commits</strong> · Engineers don't manually write changelogs · <strong>Consistent format across all releases</strong> · Stakeholders notified immediately on release · Jira ticket integration for complete traceability</p>
+</div>
+
+<ul>
+  <li><strong>Zero Manual Effort:</strong> Release notes created automatically without manual compilation</li>
+  <li><strong>Consistent Format:</strong> Every release uses the same standardised structure and formatting</li>
+  <li><strong>Jira Integration:</strong> Ticket IDs automatically extracted and linked from commits</li>
+  <li><strong>Stakeholder Notifications:</strong> Release announcements sent automatically to Slack and email</li>
+  <li><strong>Version Tracking:</strong> Complete git history automatically captured and organized</li>
+  <li><strong>Reduced Documentation Debt:</strong> No manual changelog maintenance required</li>
+</ul>
+
+<!-- CONVENTIONAL COMMITS -->
+<h2>Conventional Commits Standard</h2>
+
+<p>The skill requires commits to follow the <strong>Conventional Commits</strong> format for reliable parsing:</p>
+
+<h3>Format</h3>
+
+<pre><code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code></pre>
+
+<h3>Examples</h3>
+
+<pre><code># Good — feature addition
+feat(booking): add multi-currency support for EUR and GBP
+
+# Good — bug fix
+fix(api): resolve timeout in availability endpoint
+
+# Good — documentation update
+docs(readme): update API authentication examples
+
+# Good — performance improvement
+perf(search): optimize hotel search query for large result sets
+
+# Bad — too vague
+fixed stuff
+update code
+changes</code></pre>
+
+<h3>Supported Commit Types</h3>
+
+<ul>
+  <li><code>feat</code> — New feature (appears in "New Features" section)</li>
+  <li><code>fix</code> — Bug fix (appears in "Bug Fixes" section)</li>
+  <li><code>docs</code> — Documentation changes (optional in changelog)</li>
+  <li><code>style</code> — Code style/formatting (hidden by default)</li>
+  <li><code>refactor</code> — Code refactoring (optional in changelog)</li>
+  <li><code>test</code> — Test changes (hidden by default)</li>
+  <li><code>chore</code> — Build/dependency (optional, aggregated)</li>
+  <li><code>perf</code> — Performance (appears as special section)</li>
+</ul>
+
+<h3>Breaking Changes</h3>
+
+<p>To mark a breaking change, add <code>BREAKING CHANGE:</code> in the commit footer:</p>
+
+<pre><code>feat(api): redesign search endpoint response schema
+
+BREAKING CHANGE: /search endpoint now returns paginated results with limit/offset instead of 'more' flag</code></pre>
+
+<!-- TOOLING INTEGRATION -->
+<h2>Tooling Integration</h2>
+
+<ul>
+  <li><strong>Commit Parser:</strong> Commitlint or custom parser validates Conventional Commits format</li>
+  <li><strong>Version Detection:</strong> Git tagging with semantic versioning for release identification</li>
+  <li><strong>Ticket Linking:</strong> Jira REST API to extract and link ticket IDs from commit messages</li>
+  <li><strong>Notifications:</strong> Slack API and email service for stakeholder alerts</li>
+  <li><strong>Publication:</strong> GitHub Releases API and Confluence REST API for multi-channel publishing</li>
+</ul>
+
+<!-- WORKFLOW EXAMPLE -->
+<h2>Example Workflow — Release v2.1.0</h2>
+
+<ol>
+  <li>Engineer pushes Git tag <code>v2.1.0</code> to repository</li>
+  <li>Webhook triggers the changelog-automator skill</li>
+  <li>Skill queries all commits between <code>v2.0.0</code> and <code>v2.1.0</code></li>
+  <li>Parses commit messages and extracts type, scope, and description</li>
+  <li>Groups commits by type (feat, fix, perf, etc.)</li>
+  <li>Generates AI-enhanced human-readable descriptions</li>
+  <li>Creates CHANGELOG.md file and commits to repository</li>
+  <li>Publishes to GitHub Releases with formatted notes</li>
+  <li>Posts to Confluence in "Releases" space</li>
+  <li>Sends Slack notification to <code>#releases</code> channel</li>
+  <li>Notifies support/product teams with distribution links</li>
+</ol>
+
+<!-- GOVERNANCE -->
+<h2>Governance & Quality</h2>
+
+<p>The skill enforces commit standards through:</p>
+
+<ul>
+  <li><strong>Pre-commit Hooks:</strong> Validate commit format before push</li>
+  <li><strong>CI/CD Checks:</strong> Fail PR merge if commits don't follow standard</li>
+  <li><strong>Human Review:</strong> Generated changelog reviewed by technical writer before publication</li>
+  <li><strong>Confidence Scoring:</strong> AI-generated summaries flagged if confidence &lt; 90%</li>
+  <li><strong>Audit Trail:</strong> All generated changelogs tracked with version and timestamp</li>
+</ul>
+
+<!-- STATUS -->
+<h2>Status & Timeline</h2>
+
+<div class="callout">
+  <div class="callout-label">Implementation Status</div>
+  <p><strong>Priority:</strong> 1 (Core generation capability) · <strong>Phase:</strong> Phase 1 · <strong>Timeline:</strong> Month 2 · <strong>Status:</strong> Planning & Requirements</p>
+</div>
+
+<h3>Acceptance Criteria</h3>
+<ul>
+  <li>✅ Parses Conventional Commits format reliably</li>
+  <li>✅ Groups commits by type with human-readable categories</li>
+  <li>✅ Generates release notes in Markdown format</li>
+  <li>✅ Extracts and links Jira ticket IDs</li>
+  <li>✅ Detects and highlights breaking changes</li>
+  <li>✅ Publishes to Confluence and GitHub Releases</li>
+  <li>✅ Sends Slack notifications to relevant channels</li>
+  <li>✅ Enforces commit message standards via CI/CD</li>
+</ul>
+
+<!-- INTEGRATION -->
+<h2>Integration with Documentation Operating Model</h2>
+
+<p>This skill is part of <strong>Layer 1: AI-Assisted Documentation Generation</strong> in the broader documentation infrastructure. It works in coordination with:</p>
+
+<ul>
+  <li><strong>openapi-docs-generator & docstring-extractor:</strong> Work alongside this skill in the release documentation workflow</li>
+  <li><strong>version-manager:</strong> Maintains version-specific documentation sets</li>
+  <li><strong>version-manager:</strong> Coordinates with feature-flag-documenter for feature availability tracking</li>
+</ul>
+
+<!-- NAVIGATION -->
+<div class="nav-link">
+  <a href="index.html">← Back to Operating Model</a> | 
+  <a href="technical-glossary.html">View Technical Glossary →</a>
+</div>
+
+<div class="doc-footer">
+  <span>WebBeds — AI-Powered Documentation Operating Model · Agentic Skill Detail</span>
+  <span>Confidential — Internal Use Only · February 2026</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docstring-to-SDK Documentation Pipeline – WebBeds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a2e; --mid: #4a4a6a; --soft: #7a7a9a;
+    --accent: #2563eb; --accent2: #7c3aed;
+    --bg: #ffffff; --surface: #f8f8fc; --border: #e4e4f0;
+    --warn: #dc2626; --ok: #16a34a; --amber: #d97706;
+    --radius: 8px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+  html { font-size: 15px; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 2.8rem 0 .75rem; padding-bottom: .4rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .5rem; }
+  h4 { font-size: .93rem; font-weight: 600; color: var(--mid); margin: 1.2rem 0 .3rem; }
+  p  { margin-bottom: .9rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+  li { margin-bottom: .3rem; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .82rem; background: #f0f0f8; padding: .15em .4em; border-radius: 4px; color: var(--accent2); }
+  pre { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 1.2rem 1.4rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; margin: 1rem 0 1.4rem; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Cover */
+  .cover { display: flex; flex-direction: column; min-height: 260px; justify-content: flex-end; border-bottom: 3px solid var(--accent); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  .cover-subtitle { font-size: 1.1rem; color: var(--mid); margin-top: .5rem; max-width: 600px; line-height: 1.5; }
+  .cover-meta { margin-top: 1.6rem; font-size: .82rem; color: var(--soft); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cover-meta span strong { color: var(--mid); }
+
+  /* Callouts */
+  .callout { border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+  .callout.warn  { border-color: var(--warn); }
+  .callout.ok    { border-color: var(--ok); }
+  .callout.amber { border-color: var(--amber); }
+  .callout p { margin: 0; font-size: .92rem; }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; color: var(--accent); }
+  .callout.warn .callout-label  { color: var(--warn); }
+  .callout.ok .callout-label    { color: var(--ok); }
+  .callout.amber .callout-label { color: var(--amber); }
+
+  /* Badge */
+  .badge { display: inline-flex; align-items: center; padding: .2em .65em; border-radius: 999px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .badge-p1 { background: #fee2e2; color: var(--warn); }
+  .badge-p2 { background: #fef3c7; color: #92400e; }
+  .badge-p3 { background: #ecfdf5; color: #065f46; }
+
+  .nav-link { display: inline-block; margin-top: 2rem; }
+  .nav-link a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: .9rem; }
+  .nav-link a:hover { text-decoration: underline; }
+
+  .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+
+  @media print {
+    body { padding: 20px 24px 40px; font-size: 13px; }
+    .cover { min-height: auto; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Agentic Skill — Documentation Generation</div>
+  <h1>Docstring-to-SDK Documentation Pipeline</h1>
+  <p class="cover-subtitle">Extract docstrings and type annotations from Python/JavaScript code to automatically generate comprehensive SDK reference documentation, organized by module and version.</p>
+  <div class="cover-meta">
+    <span><strong>Skill Name:</strong> <code>docstring-extractor</code></span>
+    <span><strong>Priority:</strong> <span class="badge badge-p1">P1</span></span>
+    <span><strong>Timeline:</strong> Month 2 (Phase 1)</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<h2>How It Works</h2>
+
+<ol>
+  <li>Skill scans Python/JavaScript repositories for function/class definitions</li>
+  <li>Extracts docstrings and type annotations from code</li>
+  <li>Uses AI to enhance descriptions, add usage examples, and improve clarity</li>
+  <li>Generates SDK reference documentation organized by module</li>
+  <li>Publishes versioned documentation (e.g., SDK v2.1.0 docs) to Confluence</li>
+</ol>
+
+<!-- EXAMPLE TRANSFORMATION -->
+<h2>Example Transformation</h2>
+
+<h3>Code in Repository</h3>
+
+<pre><code>def create_booking(hotel_id: str, check_in: date, check_out: date) -> Booking:
+    """
+    Create a new hotel booking.
+    
+    Args:
+        hotel_id: Unique identifier for the hotel
+        check_in: Check-in date (YYYY-MM-DD)
+        check_out: Check-out date (YYYY-MM-DD)
+        
+    Returns:
+        Booking object with confirmation details
+    """
+    ...</code></pre>
+
+<h3>Generated Documentation</h3>
+
+<pre><code>## `create_booking()`
+
+Creates a new hotel booking for the specified hotel and dates.
+
+**Parameters:**
+- `hotel_id` (string, required): Unique identifier for the hotel
+- `check_in` (date, required): Check-in date in YYYY-MM-DD format
+- `check_out` (date, required): Check-out date in YYYY-MM-DD format
+
+**Returns:** Booking object containing confirmation number, status, and pricing
+
+**Example Usage:**
+```python
+booking = create_booking(
+    hotel_id="HTL12345",
+    check_in=date(2026, 3, 15),
+    check_out=date(2026, 3, 20)
+)
+print(booking.confirmation_number)
+```</code></pre>
+
+<!-- BENEFITS -->
+<h2>Benefits</h2>
+
+<div class="callout ok">
+  <div class="callout-label">Key Outcomes</div>
+  <p><strong>SDK documentation generated from source code</strong> · Developers write docstrings once, documentation auto-creates · <strong>Reduces manual SDK documentation by 85%</strong> · Version-aware (SDK v1 docs vs v2 docs based on Git tags) · Eliminates disconnect between code and documentation</p>
+</div>
+
+<ul>
+  <li><strong>Single Source of Truth:</strong> SDK docstrings drive documentation; changes are reflected on next generation</li>
+  <li><strong>Developer Productivity:</strong> Engineers write docstrings during development; SDK docs are free artifact</li>
+  <li><strong>Version Management:</strong> Automatically generates separate docs for each SDK version (v1, v2, v3)</li>
+  <li><strong>Consistency:</strong> All SDK functions documented in standardised format with examples</li>
+  <li><strong>Reduced Maintenance:</strong> No manual doc updates required when code changes</li>
+  <li><strong>Improved Onboarding:</strong> Clear examples reduce support questions from SDK users</li>
+</ul>
+
+<!-- TOOLING INTEGRATION -->
+<h2>Tooling Integration</h2>
+
+<p>The pipeline integrates with industry-standard code analysis tools:</p>
+
+<ul>
+  <li><strong>Code Parsing:</strong> Sphinx (Python), JSDoc (JavaScript), Rustdoc (Rust) for extracting docstrings</li>
+  <li><strong>AST Analysis:</strong> Abstract Syntax Tree parsers for understanding code structure and relationships</li>
+  <li><strong>AI Enhancement:</strong> Natural language polish and example generation using GPT-4 or Claude</li>
+  <li><strong>Versioning:</strong> Git tag detection for version-specific documentation sets</li>
+  <li><strong>Publication:</strong> Confluence REST API for automatic publishing to documentation spaces</li>
+</ul>
+
+<!-- EXAMPLE WORKFLOW -->
+<h2>Example Workflow</h2>
+
+<h3>Scenario: Publishing SDK v2.1.0 Documentation</h3>
+
+<p>When a Git tag <code>v2.1.0</code> is pushed to the SDK repository:</p>
+
+<ol>
+  <li>Skill checks out the repository at that specific tag</li>
+  <li>Parses all Python/JavaScript files for docstrings and type hints</li>
+  <li>Extracts method signatures, parameters, return types</li>
+  <li>Uses AI to generate examples if not provided</li>
+  <li>Generates module-level documentation pages</li>
+  <li>Publishes to Confluence under "SDK Documentation v2.1.0" space</li>
+  <li>Tags all pages with version metadata (<code>version: 2.1.0</code>, <code>ai-generated: true</code>)</li>
+</ol>
+
+<!-- DOCUMENTATION STRUCTURE -->
+<h2>Generated Documentation Structure</h2>
+
+<pre><code>SDK Documentation (v2.1.0)
+├── Installation & Setup
+│   ├── Installation Guide
+│   └── Configuration
+├── API Reference
+│   ├── auth (Module)
+│   │   ├── authenticate()
+│   │   ├── refresh_token()
+│   │   └── logout()
+│   ├── bookings (Module)
+│   │   ├── create_booking()
+│   │   ├── list_bookings()
+│   │   └── cancel_booking()
+│   └── hotels (Module)
+│       ├── search_hotels()
+│       └── get_hotel_details()
+├── Code Examples
+│   ├── Authentication Example
+│   ├── Search & Booking Workflow
+│   └── Error Handling
+└── Changelog (v2.0.0 → v2.1.0)</code></pre>
+
+<!-- QUALITY VALIDATION -->
+<h2>Quality Validation</h2>
+
+<p>Before publishing, the skill validates:</p>
+
+<ul>
+  <li><strong>Docstring Completeness:</strong> All public functions have docstrings</li>
+  <li><strong>Parameter Documentation:</strong> All function parameters are documented</li>
+  <li><strong>Type Annotations:</strong> Functions include type hints</li>
+  <li><strong>Example Executability:</strong> Generated examples run successfully</li>
+  <li><strong>Link Integrity:</strong> Cross-references within documentation are valid</li>
+  <li><strong>AI Confidence:</strong> Low-confidence AI-generated sections flagged for review</li>
+</ul>
+
+<!-- STATUS -->
+<h2>Status & Timeline</h2>
+
+<div class="callout">
+  <div class="callout-label">Implementation Status</div>
+  <p><strong>Priority:</strong> 1 (Core generation capability) · <strong>Phase:</strong> Phase 1 · <strong>Timeline:</strong> Month 2 · <strong>Status:</strong> Planning & Requirements</p>
+</div>
+
+<h3>Acceptance Criteria</h3>
+<ul>
+  <li>✅ Extracts docstrings from Python and JavaScript repositories</li>
+  <li>✅ Generates formatted SDK reference documentation</li>
+  <li>✅ Includes practical usage examples for each function</li>
+  <li>✅ Version-aware (generates docs per Git tag)</li>
+  <li>✅ Validates completeness of parameter documentation</li>
+  <li>✅ Publishes to Confluence with version-specific organization</li>
+  <li>✅ Includes AI-generated examples with confidence scoring</li>
+</ul>
+
+<!-- INTEGRATION -->
+<h2>Integration with Documentation Operating Model</h2>
+
+<p>This skill is part of <strong>Layer 1: AI-Assisted Documentation Generation</strong> in the broader documentation infrastructure. It works in coordination with:</p>
+
+<ul>
+  <li><strong>changelog-automator:</strong> Provides version context and feature descriptions</li>
+  <li><strong>version-manager:</strong> Maintains parallel documentation for multiple SDK versions</li>
+  <li><strong>missing-metadata-enforcer:</strong> Ensures all generated SDK pages include required metadata</li>
+  <li><strong>broken-link-detector:</strong> Validates cross-references in generated SDK documentation</li>
+</ul>
+
+<!-- NAVIGATION -->
+<div class="nav-link">
+  <a href="index.html">← Back to Operating Model</a> | 
+  <a href="technical-glossary.html">View Technical Glossary →</a>
+</div>
+
+<div class="doc-footer">
+  <span>WebBeds — AI-Powered Documentation Operating Model · Agentic Skill Detail</span>
+  <span>Confidential — Internal Use Only · February 2026</span>
+</div>
+
+</body>
+</html>
