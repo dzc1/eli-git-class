@@ -60,6 +60,16 @@
 
   .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
 
+  /* Header Navigation */
+  .site-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: .8rem 0; margin: -40px -32px 2.5rem; position: sticky; top: 0; z-index: 100; }
+  .site-header-inner { max-width: 900px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+  .site-logo { font-size: .85rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: .05em; white-space: nowrap; }
+  .site-logo:hover { color: var(--accent2); }
+  .site-nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .site-nav a { font-size: .8rem; color: var(--mid); text-decoration: none; font-weight: 500; white-space: nowrap; }
+  .site-nav a:hover { color: var(--accent); }
+  .site-nav a.active { color: var(--accent); font-weight: 600; }
+
   @media print {
     body { padding: 20px 24px 40px; font-size: 13px; }
     .cover { min-height: auto; }
@@ -68,6 +78,21 @@
 </style>
 </head>
 <body>
+
+<!-- SITE HEADER -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="site-logo">WEBBEDS DOCS</a>
+    <nav class="site-nav">
+      <a href="index.html">Operating Model</a>
+      <a href="openapi-to-documentation-pipeline.html" class="active">OpenAPI</a>
+      <a href="docstring-to-sdk-pipeline.html">Docstring</a>
+      <a href="git-commit-to-changelog-pipeline.html">Changelog</a>
+      <a href="schema-to-data-model-pipeline.html">Schema</a>
+      <a href="technical-glossary.html">Glossary</a>
+    </nav>
+  </div>
+</header>
 
 <!-- COVER -->
 <div class="cover">
