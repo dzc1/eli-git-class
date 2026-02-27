@@ -175,7 +175,7 @@
     <ul>
       <li><strong>Confluence REST API</strong>: Read/write documentation</li>
       <li><strong>Jira REST API</strong>: Create/update tickets</li>
-      <li><strong>Slack API</strong>: Send notifications and receive commands</li>
+      <li><strong>Microsoft Teams API</strong>: Send notifications and receive commands</li>
     </ul>
   </div>
 </div>
@@ -560,7 +560,7 @@ export CONFLUENCE_API_TOKEN="abc123..."</code></pre>
     <ul>
       <li><strong>Confluence</strong> (documentation platform)</li>
       <li><strong>Jira</strong> (ticket tracking)</li>
-      <li><strong>Slack</strong> (notifications, commands)</li>
+      <li><strong>Microsoft Teams</strong> (notifications, commands)</li>
       <li><strong>GitHub</strong> (code repository)</li>
     </ul>
   </div>
@@ -720,7 +720,7 @@ export CONFLUENCE_API_TOKEN="abc123..."</code></pre>
 <div class="term">
   <div class="term-name">OAuth 2.0</div>
   <div class="term-desc">
-    <p>An authorization framework allowing third-party applications to access user data without exposing passwords. Slack and Jira APIs use OAuth 2.0 for secure authentication.</p>
+    <p>An authorization framework allowing third-party applications to access user data without exposing passwords. Microsoft Teams and Jira APIs use OAuth 2.0 for secure authentication.</p>
   </div>
 </div>
 
@@ -837,7 +837,7 @@ while True:
 <div class="term">
   <div class="term-name">REST API (Representational State Transfer)</div>
   <div class="term-desc">
-    <p>An architectural style for web services using HTTP methods (GET, POST, PUT, DELETE) to interact with resources. Confluence, Jira, and Slack expose REST APIs.</p>
+    <p>An architectural style for web services using HTTP methods (GET, POST, PUT, DELETE) to interact with resources. Confluence, Jira, and Microsoft Teams expose REST APIs.</p>
   </div>
 </div>
 
@@ -905,7 +905,7 @@ while True:
 </div>
 
 <div class="term">
-  <div class="term-name">Slack</div>
+  <div class="term-name">Microsoft Teams</div>
   <div class="term-desc">
     <p>A team communication platform. Used for:</p>
     <ul>
@@ -917,16 +917,16 @@ while True:
 </div>
 
 <div class="term">
-  <div class="term-name">Slack Bot</div>
+  <div class="term-name">Microsoft Teams Bot</div>
   <div class="term-desc">
-    <p>An automated program that interacts with users in Slack. This project includes a bot that responds to slash commands and posts reports to channels.</p>
+    <p>An automated program that interacts with users in Microsoft Teams. This project includes a bot that responds to slash commands and posts reports to channels.</p>
   </div>
 </div>
 
 <div class="term">
   <div class="term-name">Slash Command</div>
   <div class="term-desc">
-    <p>A Slack feature where users trigger actions by typing <code>/command-name</code>. Example: <code>/audit-docs</code> triggers a freshness audit.</p>
+    <p>A Microsoft Teams feature where users trigger actions by typing <code>/command-name</code>. Example: <code>/audit-docs</code> triggers a freshness audit.</p>
   </div>
 </div>
 
@@ -1105,7 +1105,7 @@ steps:
   - audit:
       skill: freshness-audit
   - notify:
-      skill: slack-notifier</code></pre>
+      skill: teams-notifier</code></pre>
     </div>
   </div>
 </div>
@@ -1156,7 +1156,7 @@ steps:
 <ul>
   <li><strong>Confluence REST API</strong>: <a href="https://developer.atlassian.com/cloud/confluence/rest/v2/intro/" target="_blank">https://developer.atlassian.com/cloud/confluence/rest/v2/intro/</a></li>
   <li><strong>Jira REST API</strong>: <a href="https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/" target="_blank">https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/</a></li>
-  <li><strong>Slack API</strong>: <a href="https://api.slack.com/" target="_blank">https://api.slack.com/</a></li>
+  <li><strong>Microsoft Teams API</strong>: <a href="https://learn.microsoft.com/en-us/microsoftteams/platform/" target="_blank">https://learn.microsoft.com/en-us/microsoftteams/platform/</a></li>
   <li><strong>Temporal Docs</strong>: <a href="https://docs.temporal.io/" target="_blank">https://docs.temporal.io/</a></li>
   <li><strong>Apache Airflow</strong>: <a href="https://airflow.apache.org/docs/" target="_blank">https://airflow.apache.org/docs/</a></li>
 </ul>
