@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schema-to-Data-Model Documentation Pipeline – WebBeds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a2e; --mid: #4a4a6a; --soft: #7a7a9a;
+    --accent: #2563eb; --accent2: #7c3aed;
+    --bg: #ffffff; --surface: #f8f8fc; --border: #e4e4f0;
+    --warn: #dc2626; --ok: #16a34a; --amber: #d97706;
+    --radius: 8px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+  html { font-size: 15px; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 2.8rem 0 .75rem; padding-bottom: .4rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .5rem; }
+  h4 { font-size: .93rem; font-weight: 600; color: var(--mid); margin: 1.2rem 0 .3rem; }
+  p  { margin-bottom: .9rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+  li { margin-bottom: .3rem; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .82rem; background: #f0f0f8; padding: .15em .4em; border-radius: 4px; color: var(--accent2); }
+  pre { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 1.2rem 1.4rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; margin: 1rem 0 1.4rem; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Cover */
+  .cover { display: flex; flex-direction: column; min-height: 260px; justify-content: flex-end; border-bottom: 3px solid var(--accent); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  .cover-subtitle { font-size: 1.1rem; color: var(--mid); margin-top: .5rem; max-width: 600px; line-height: 1.5; }
+  .cover-meta { margin-top: 1.6rem; font-size: .82rem; color: var(--soft); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cover-meta span strong { color: var(--mid); }
+
+  /* Callouts */
+  .callout { border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+  .callout.warn  { border-color: var(--warn); }
+  .callout.ok    { border-color: var(--ok); }
+  .callout.amber { border-color: var(--amber); }
+  .callout p { margin: 0; font-size: .92rem; }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; color: var(--accent); }
+  .callout.warn .callout-label  { color: var(--warn); }
+  .callout.ok .callout-label    { color: var(--ok); }
+  .callout.amber .callout-label { color: var(--amber); }
+
+  /* Badge */
+  .badge { display: inline-flex; align-items: center; padding: .2em .65em; border-radius: 999px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .badge-p1 { background: #fee2e2; color: var(--warn); }
+  .badge-p2 { background: #fef3c7; color: #92400e; }
+  .badge-p3 { background: #ecfdf5; color: #065f46; }
+
+  .nav-link { display: inline-block; margin-top: 2rem; }
+  .nav-link a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: .9rem; }
+  .nav-link a:hover { text-decoration: underline; }
+
+  .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+
+  @media print {
+    body { padding: 20px 24px 40px; font-size: 13px; }
+    .cover { min-height: auto; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Agentic Skill — Documentation Generation</div>
+  <h1>Schema-to-Data-Model Documentation Pipeline</h1>
+  <p class="cover-subtitle">Monitor database migration files and automatically generate data model documentation with ER diagrams, explaining table purposes, relationships, and column definitions.</p>
+  <div class="cover-meta">
+    <span><strong>Skill Name:</strong> <code>schema-documenter</code></span>
+    <span><strong>Priority:</strong> <span class="badge badge-p2">P2</span></span>
+    <span><strong>Timeline:</strong> Month 5 (Phase 2)</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<h2>How It Works</h2>
+
+<ol>
+  <li>Skill monitors database migration files (Alembic, Flyway, Liquibase)</li>
+  <li>Extracts table definitions, column types, and relationships</li>
+  <li>Generates ER diagrams using Mermaid or PlantUML visualization</li>
+  <li>Uses AI to explain each table's purpose and relationships</li>
+  <li>Publishes data model documentation to Confluence</li>
+</ol>
+
+<!-- EXAMPLE TRANSFORMATION -->
+<h2>Example Transformation</h2>
+
+<h3>Input: Database Migration File</h3>
+
+<pre><code>CREATE TABLE bookings (
+    id UUID PRIMARY KEY,
+    hotel_id UUID REFERENCES hotels(id),
+    check_in DATE NOT NULL,
+    check_out DATE NOT NULL,
+    status VARCHAR(20) NOT NULL
+);</code></pre>
+
+<h3>Generated Documentation</h3>
+
+<h4><code>bookings</code> Table</h4>
+
+<p><strong>Purpose:</strong> Stores all hotel booking records created by customers</p>
+
+<h4>Columns:</h4>
+<ul>
+  <li><code>id</code> (UUID, primary key): Unique booking identifier</li>
+  <li><code>hotel_id</code> (UUID, foreign key → hotels.id): Hotel where booking is made</li>
+  <li><code>check_in</code> (DATE): Customer check-in date</li>
+  <li><code>check_out</code> (DATE): Customer check-out date</li>
+  <li><code>status</code> (VARCHAR): Booking status (pending, confirmed, cancelled)</li>
+</ul>
+
+<h4>Relationships:</h4>
+<ul>
+  <li>Many-to-one with <code>hotels</code> table</li>
+  <li>One-to-many with <code>booking_rooms</code> table</li>
+</ul>
+
+<h4>ER Diagram:</h4>
+
+<pre><code>erDiagram
+    hotels ||--o{ bookings : "has"
+    bookings ||--o{ booking_rooms : "contains"
+    hotels {
+        UUID id PK
+        VARCHAR name
+    }
+    bookings {
+        UUID id PK
+        UUID hotel_id FK
+        DATE check_in
+        DATE check_out
+        VARCHAR status
+    }</code></pre>
+
+<!-- BENEFITS -->
+<h2>Benefits</h2>
+
+<div class="callout ok">
+  <div class="callout-label">Key Outcomes</div>
+  <p><strong>Database schema documentation always in sync with migrations</strong> · New engineers onboard faster with visual ER diagrams · <strong>Reduces tribal knowledge dependency</strong> · Automatic detection of schema changes · Eliminates need for manual schema documentation</p>
+</div>
+
+<ul>
+  <li><strong>Automatic Updates:</strong> Documentation regenerated whenever migrations are deployed</li>
+  <li><strong>Visual Clarity:</strong> ER diagrams make data relationships immediately understandable</li>
+  <li><strong>Faster Onboarding:</strong> New team members grasp database structure quickly</li>
+  <li><strong>Version Tracking:</strong> Schema changes tracked and documented per version tag</li>
+  <li><strong>Impact Analysis:</strong> Understand cascade effects of schema changes across tables</li>
+  <li><strong>No Manual Updates:</strong> Zero manual effort required to keep schema docs current</li>
+</ul>
+
+<!-- DOCUMENTATION STRUCTURE -->
+<h2>Generated Documentation Structure</h2>
+
+<pre><code>Database Schema Documentation
+├── Overview & Architecture
+│   └── Database Design Principles
+├── Core Tables
+│   ├── hotels
+│   ├── bookings
+│   ├── rooms
+│   └── customers
+├── Supporting Tables
+│   ├── pricing
+│   ├── amenities
+│   └── review_ratings
+├── Entity Relationships
+│   ├── ER Diagram (Full)
+│   ├── ER Diagram (Booking Flow)
+│   └── Relationship Matrix
+├── Indexing Strategy
+│   ├── Primary Keys
+│   ├── Foreign Keys
+│   └── Performance Indexes
+└── Migration History
+    ├── Recent Changes
+    └── Version Changelog</code></pre>
+
+<!-- TOOLING INTEGRATION -->
+<h2>Tooling Integration</h2>
+
+<ul>
+  <li><strong>Schema Extraction:</strong> Schemaspy, SchemaCrawler for parsing database structure</li>
+  <li><strong>Diagram Generation:</strong> Mermaid or PlantUML for creating visual ER diagrams</li>
+  <li><strong>Migration Parsers:</strong>
+    <ul>
+      <li>Alembic (Python)</li>
+      <li>Flyway (Java/SQL)</li>
+      <li>Liquibase (multi-language)</li>
+    </ul>
+  </li>
+  <li><strong>Change Detection:</strong> File monitoring for migration directories</li>
+  <li><strong>Publication:</strong> Confluence REST API for publishing documentation</li>
+</ul>
+
+<!-- KEY FEATURES -->
+<h2>Key Features</h2>
+
+<h3>Table Documentation</h3>
+<p>For each table, the skill generates:</p>
+<ul>
+  <li>Purpose description (what data is stored and why)</li>
+  <li>Complete column list with types and constraints</li>
+  <li>Storage and retention policies</li>
+  <li>Query patterns and performance considerations</li>
+  <li>Related tables and dependency information</li>
+</ul>
+
+<h3>Relationship Mapping</h3>
+<p>Visualizes and documents:</p>
+<ul>
+  <li>One-to-many relationships</li>
+  <li>Many-to-many relationships through junction tables</li>
+  <li>Cascade delete/update policies</li>
+  <li>Referential integrity constraints</li>
+  <li>Dependency chains across dataflows</li>
+</ul>
+
+<h3>ER Diagrams</h3>
+<p>Multiple diagram views:</p>
+<ul>
+  <li><strong>Full Schema:</strong> All tables and relationships</li>
+  <li><strong>Bounded Contexts:</strong> Related tables by domain (e.g., Booking context, Billing context)</li>
+  <li><strong>User Journey:</strong> Tables involved in specific business flows</li>
+  <li><strong>Data Lineage:</strong> How data flows from source to destination tables</li>
+</ul>
+
+<!-- MIGRATION SUPPORT -->
+<h2>Supported Migration Tools</h2>
+
+<h3>Python (Alembic)</h3>
+<pre><code>def upgrade():
+    op.create_table(
+        'bookings',
+        sa.Column('id', sa.UUID(), primary_key=True),
+        sa.Column('hotel_id', sa.UUID(), sa.ForeignKey('hotels.id')),
+        sa.Column('check_in', sa.Date()),
+        sa.Column('check_out', sa.Date()),
+        sa.Column('status', sa.String(20))
+    )</code></pre>
+
+<h3>SQL (Flyway/Liquibase)</h3>
+<pre><code>CREATE TABLE bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hotel_id UUID NOT NULL REFERENCES hotels(id),
+    check_in DATE NOT NULL,
+    check_out DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending'
+);</code></pre>
+
+<!-- STATUS -->
+<h2>Status & Timeline</h2>
+
+<div class="callout">
+  <div class="callout-label">Implementation Status</div>
+  <p><strong>Priority:</strong> 2 (Supporting capability) · <strong>Phase:</strong> Phase 2 · <strong>Timeline:</strong> Month 5 · <strong>Status:</strong> Planned</p>
+</div>
+
+<h3>Acceptance Criteria</h3>
+<ul>
+  <li>✅ Parses migration files (Alembic, Flyway, Liquibase)</li>
+  <li>✅ Generates table documentation with column details</li>
+  <li>✅ Creates visual ER diagrams in Mermaid or PlantUML</li>
+  <li>✅ Documents table relationships and integrity constraints</li>
+  <li>✅ Includes AI-generated purpose descriptions</li>
+  <li>✅ Publishes to Confluence with version metadata</li>
+  <li>✅ Updates documentation on migration deployment</li>
+  <li>✅ Supports multiple migration tools</li>
+</ul>
+
+<!-- INTEGRATION -->
+<h2>Integration with Documentation Operating Model</h2>
+
+<p>This skill is part of <strong>Layer 1: AI-Assisted Documentation Generation</strong> in the broader documentation infrastructure. It works in coordination with:</p>
+
+<ul>
+  <li><strong>version-manager:</strong> Maintains schema docs for multiple database versions</li>
+  <li><strong>missing-metadata-enforcer:</strong> Ensures all generated schema pages include required metadata</li>
+  <li><strong>broken-link-detector:</strong> Validates cross-references in schema documentation</li>
+</ul>
+
+<p>As a Phase 2 capability, this skill becomes active after Phase 1 generation skills (OpenAPI, Docstring, Changelog) are stabilized in production.</p>
+
+<!-- NAVIGATION -->
+<div class="nav-link">
+  <a href="index.html">← Back to Operating Model</a> | 
+  <a href="technical-glossary.html">View Technical Glossary →</a>
+</div>
+
+<div class="doc-footer">
+  <span>WebBeds — AI-Powered Documentation Operating Model · Agentic Skill Detail</span>
+  <span>Confidential — Internal Use Only · February 2026</span>
+</div>
+
+</body>
+</html>

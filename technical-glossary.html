@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Glossary: Agentic Documentation Infrastructure – WebBeds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a2e; --mid: #4a4a6a; --soft: #7a7a9a;
+    --accent: #2563eb; --accent2: #7c3aed;
+    --bg: #ffffff; --surface: #f8f8fc; --border: #e4e4f0;
+    --warn: #dc2626; --ok: #16a34a; --amber: #d97706;
+    --radius: 8px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+  html { font-size: 15px; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 2.8rem 0 .75rem; padding-bottom: .4rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .5rem; }
+  h4 { font-size: .93rem; font-weight: 600; color: var(--mid); margin: 1.2rem 0 .3rem; }
+  p  { margin-bottom: .9rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+  li { margin-bottom: .3rem; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .82rem; background: #f0f0f8; padding: .15em .4em; border-radius: 4px; color: var(--accent2); }
+  pre { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 1.2rem 1.4rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; margin: 1rem 0 1.4rem; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Cover */
+  .cover { display: flex; flex-direction: column; min-height: 260px; justify-content: flex-end; border-bottom: 3px solid var(--accent); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  .cover-subtitle { font-size: 1.1rem; color: var(--mid); margin-top: .5rem; max-width: 600px; line-height: 1.5; }
+  .cover-meta { margin-top: 1.6rem; font-size: .82rem; color: var(--soft); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cover-meta span strong { color: var(--mid); }
+
+  /* Callouts */
+  .callout { border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+  .callout.warn  { border-color: var(--warn); }
+  .callout.ok    { border-color: var(--ok); }
+  .callout.amber { border-color: var(--amber); }
+  .callout p { margin: 0; font-size: .92rem; }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; color: var(--accent); }
+  .callout.warn .callout-label  { color: var(--warn); }
+  .callout.ok .callout-label    { color: var(--ok); }
+  .callout.amber .callout-label { color: var(--amber); }
+
+  /* Glossary term */
+  .term { margin: 1.4rem 0; padding: 1rem 1.2rem; background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; }
+  .term-name { font-weight: 700; font-size: 1rem; color: var(--accent); margin-bottom: .4rem; }
+  .term-desc { font-size: .88rem; color: var(--mid); }
+  .term-example { margin-top: .6rem; }
+  .term-example-label { font-size: .78rem; font-weight: 600; color: var(--soft); text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; margin: 1rem 0 1.4rem; }
+  th { background: var(--surface); color: var(--mid); font-weight: 600; text-align: left; padding: .55rem .8rem; border-bottom: 2px solid var(--border); font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+  td { padding: .5rem .8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  .nav-link { display: inline-block; margin-top: 2rem; }
+  .nav-link a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: .9rem; }
+  .nav-link a:hover { text-decoration: underline; }
+
+  .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+
+  /* Quick nav alphabet */
+  .alpha-nav { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0; padding: 1rem; background: var(--surface); border-radius: var(--radius); }
+  .alpha-nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: .85rem; padding: .3rem .5rem; }
+  .alpha-nav a:hover { background: var(--bg); border-radius: 4px; }
+
+  @media print {
+    body { padding: 20px 24px 40px; font-size: 13px; }
+    .cover { min-height: auto; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Reference Documentation</div>
+  <h1>Technical Glossary</h1>
+  <p class="cover-subtitle">Comprehensive reference for all technical concepts, tools, libraries, and terminology used in the AI-Powered Documentation Operating Model.</p>
+  <div class="cover-meta">
+    <span><strong>Document Type:</strong> Glossary & Reference</span>
+    <span><strong>Last Updated:</strong> February 2026</span>
+  </div>
+</div>
+
+<!-- QUICK NAV -->
+<div class="alpha-nav">
+  <a href="#a">A</a><a href="#b">B</a><a href="#c">C</a><a href="#d">D</a><a href="#e">E</a><a href="#f">F</a><a href="#g">G</a><a href="#h">H</a><a href="#i">I</a><a href="#j">J</a><a href="#k">K</a><a href="#l">L</a><a href="#m">M</a><a href="#n">N</a><a href="#o">O</a><a href="#p">P</a><a href="#r">R</a><a href="#s">S</a><a href="#t">T</a><a href="#u">U</a><a href="#v">V</a><a href="#w">W</a><a href="#x">X</a><a href="#y">Y</a><a href="#z">Z</a><a href="#acronyms">Acronyms</a><a href="#resources">Resources</a>
+</div>
+
+<!-- A -->
+<h2 id="a">A</h2>
+
+<div class="term">
+  <div class="term-name">Agentic Skill</div>
+  <div class="term-desc">
+    <p>A modular, self-contained capability that enables an AI agent to perform a specific task autonomously. In this context, skills interact with Confluence to audit, maintain, and govern documentation.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p>The "Confluence Freshness Audit" skill scans all pages and generates reports on documentation age.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">ADF (Atlassian Document Format)</div>
+  <div class="term-desc">
+    <p>A JSON-based markup format used by Confluence Cloud to represent page content. ADF is more structured than HTML, making it machine-readable for parsing status nodes, tables, and other elements.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>{
+  "type": "status",
+  "attrs": {
+    "text": "In Progress",
+    "color": "blue"
+  }
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Agent</div>
+  <div class="term-desc">
+    <p>An autonomous software program that can perceive its environment, make decisions, and take actions to achieve goals. In documentation infrastructure, agents invoke skills to maintain documentation.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Agent Orchestration</div>
+  <div class="term-desc">
+    <p>The process of coordinating multiple agents and skills to execute complex, multi-step workflows. Orchestration involves scheduling, sequencing, error handling, and human approval gates.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">API (Application Programming Interface)</div>
+  <div class="term-desc">
+    <p>A set of protocols and tools that allow software applications to communicate. This business case relies heavily on:</p>
+    <ul>
+      <li><strong>Confluence REST API</strong>: Read/write documentation</li>
+      <li><strong>Jira REST API</strong>: Create/update tickets</li>
+      <li><strong>Slack API</strong>: Send notifications and receive commands</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">API Rate Limiting</div>
+  <div class="term-desc">
+    <p>A constraint imposed by API providers to prevent abuse. Confluence Cloud allows ~100 requests/minute per IP. Skills must throttle requests to avoid hitting this limit.</p>
+    <div class="term-example">
+      <div class="term-example-label">Mitigation</div>
+      <p>Use <code>time.sleep()</code> between requests or exponential backoff on 429 errors.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">API Token</div>
+  <div class="term-desc">
+    <p>A credential used to authenticate API requests. For Confluence/Jira, this is a long-lived token generated from Atlassian Account Settings.</p>
+    <div class="term-example">
+      <div class="term-example-label">Security</div>
+      <p>Tokens should be stored in secrets managers (AWS Secrets Manager, HashiCorp Vault), never committed to Git.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Approval Workflow</div>
+  <div class="term-desc">
+    <p>A governance process where content changes require one or more reviewers to approve before publishing. Critical documentation may require dual approval (peer + manager).</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Archival</div>
+  <div class="term-desc">
+    <p>The process of moving outdated or obsolete documentation to a dedicated "Archive" space. Archived pages are no longer actively maintained but remain searchable for historical reference.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Audit Trail</div>
+  <div class="term-desc">
+    <p>An immutable log of all actions taken by skills or humans. Audit trails are essential for compliance, allowing organizations to prove when and why changes were made.</p>
+    <div class="term-example">
+      <div class="term-example-label">Storage</div>
+      <p>PostgreSQL table with columns: <code>timestamp</code>, <code>action</code>, <code>user</code>, <code>inputs</code>, <code>outputs</code>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- B -->
+<h2 id="b">B</h2>
+
+<div class="term">
+  <div class="term-name">Backoff (Exponential)</div>
+  <div class="term-desc">
+    <p>A retry strategy where wait time increases exponentially after each failure. Used to handle transient API errors (network issues, rate limits).</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p>Retry after 1 sec, then 2 sec, then 4 sec, then 8 sec, etc.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Batch Processing</div>
+  <div class="term-desc">
+    <p>Processing multiple items (e.g., pages, API requests) in groups rather than one-at-a-time. Batch processing improves efficiency by reducing overhead.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p>Retrieve 50 pages per API call instead of 1 page at a time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Basic Auth</div>
+  <div class="term-desc">
+    <p>An HTTP authentication scheme where credentials (email + password or token) are sent in the <code>Authorization</code> header, Base64-encoded.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example (Python)</div>
+      <pre><code>from requests.auth import HTTPBasicAuth
+auth = HTTPBasicAuth('email@example.com', 'api_token')</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Broken Link</div>
+  <div class="term-desc">
+    <p>A hyperlink that points to a non-existent or inaccessible resource. Internal broken links reference deleted Confluence pages; external broken links point to dead websites (HTTP 404).</p>
+  </div>
+</div>
+
+<!-- C -->
+<h2 id="c">C</h2>
+
+<div class="term">
+  <div class="term-name">CI/CD (Continuous Integration / Continuous Deployment)</div>
+  <div class="term-desc">
+    <p>A software development practice where code changes are automatically tested and deployed. In this project, GitHub Actions runs tests on skills before deploying to production.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">CLI (Command-Line Interface)</div>
+  <div class="term-desc">
+    <p>A text-based interface for interacting with software. The proposed documentation infrastructure includes a CLI tool (<code>doc-agent</code>) for developers to run skills locally.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>doc-agent audit --type freshness --output ./reports/</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Composability</div>
+  <div class="term-desc">
+    <p>The ability to combine simple components (skills) to create complex workflows. Composable skills can be chained together (Audit → Report → Notify).</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Compliance</div>
+  <div class="term-desc">
+    <p>Adherence to organizational policies, regulatory requirements, or industry standards. In documentation, compliance means ensuring pages meet freshness SLAs, have required metadata, and pass validation checks.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Confluence</div>
+  <div class="term-desc">
+    <p>Atlassian's wiki and knowledge base platform. WebBeds uses Confluence Cloud to store 13,981+ pages of documentation.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Confluence REST API</div>
+  <div class="term-desc">
+    <p>The HTTP API provided by Atlassian for programmatic access to Confluence. Used by skills to read/write pages, retrieve metadata, and manage content.</p>
+    <div class="term-example">
+      <div class="term-example-label">Endpoint Examples</div>
+      <ul>
+        <li><code>GET /rest/api/content</code> - List pages</li>
+        <li><code>GET /rest/api/content/{id}</code> - Get page details</li>
+        <li><code>PUT /rest/api/content/{id}</code> - Update page</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Cron</div>
+  <div class="term-desc">
+    <p>A time-based job scheduler in Unix-like systems. In this project, orchestration platforms (Temporal, Airflow) use cron expressions to schedule recurring workflows.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p><code>0 9 * * MON</code> = Every Monday at 9:00 AM.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">CSV (Comma-Separated Values)</div>
+  <div class="term-desc">
+    <p>A plain-text file format for tabular data. Skills export audit results as CSV files that can be opened in Excel, Google Sheets, or analyzed programmatically.</p>
+  </div>
+</div>
+
+<!-- D -->
+<h2 id="d">D</h2>
+
+<div class="term">
+  <div class="term-name">DAG (Directed Acyclic Graph)</div>
+  <div class="term-desc">
+    <p>A graph structure used to represent workflows with dependencies. In orchestration, DAGs define task sequences (A → B → C) and parallelism (A + B → C).</p>
+    <div class="term-example">
+      <div class="term-example-label">Tools</div>
+      <p>Airflow, Temporal use DAGs to coordinate skill execution.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Docker</div>
+  <div class="term-desc">
+    <p>A containerization platform that packages applications with their dependencies into portable, isolated containers. Skills are packaged as Docker images for reproducibility and scalability.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Docker Compose</div>
+  <div class="term-desc">
+    <p>A tool for defining and running multi-container Docker applications. Used in Phase 1 for local development (Temporal + PostgreSQL + FastAPI).</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Documentation Decay</div>
+  <div class="term-desc">
+    <p>The phenomenon where documentation becomes outdated, incorrect, or irrelevant over time due to lack of maintenance. This business case addresses decay through automated freshness auditing.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Dry Run Mode</div>
+  <div class="term-desc">
+    <p>A feature where skills simulate actions without making changes. Used for testing and previewing modifications before applying them.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>python skill.py --dry-run  # Show what would change, but don't apply</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- E -->
+<h2 id="e">E</h2>
+
+<div class="term">
+  <div class="term-name">Embedding</div>
+  <div class="term-desc">
+    <p>A mathematical representation of text as a high-dimensional vector. Embeddings enable semantic search by measuring similarity between documents.</p>
+    <div class="term-example">
+      <div class="term-example-label">Use Case</div>
+      <p>Search Indexer skill generates embeddings to find related documentation.</p>
+      <div class="term-example-label">Models</div>
+      <p>OpenAI <code>text-embedding-3-small</code>, open-source alternatives (Sentence Transformers).</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Environment Variable</div>
+  <div class="term-desc">
+    <p>A dynamic value stored in the operating system that affects how processes run. Used to configure applications without hardcoding values.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>export CONFLUENCE_EMAIL="user@company.com"
+export CONFLUENCE_API_TOKEN="abc123..."</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Escalation</div>
+  <div class="term-desc">
+    <p>The process of notifying a higher authority (manager, compliance officer) when an issue remains unresolved. In governance workflows, pages exceeding review SLAs are escalated if owners don't respond.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Event-Driven Architecture</div>
+  <div class="term-desc">
+    <p>A design pattern where actions are triggered by events (e.g., page published, ticket closed). Skills can be invoked via Confluence webhooks when pages are created/updated.</p>
+  </div>
+</div>
+
+<!-- F -->
+<h2 id="f">F</h2>
+
+<div class="term">
+  <div class="term-name">Fan-Out / Fan-In</div>
+  <div class="term-desc">
+    <p>An orchestration pattern where multiple tasks execute in parallel (fan-out), then results are aggregated (fan-in).</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p>Audit 3 Confluence spaces concurrently → Combine reports into one summary.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">FastAPI</div>
+  <div class="term-desc">
+    <p>A modern Python web framework for building APIs. Used in this project to expose the orchestration API for triggering skills.</p>
+    <div class="term-example">
+      <div class="term-example-label">Benefits</div>
+      <p>Async support, auto-generated OpenAPI documentation, fast performance.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Freshness</div>
+  <div class="term-desc">
+    <p>A measure of how recently a page was updated. Pages become "stale" if not reviewed within defined time thresholds (6-18 months depending on criticality).</p>
+    <div class="term-example">
+      <div class="term-example-label">Metric</div>
+      <p>Freshness Score = % of pages meeting review SLA.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Freshness Bucket</div>
+  <div class="term-desc">
+    <p>A category grouping pages by age. The Confluence Freshness Audit skill uses buckets like:</p>
+    <ul>
+      <li>Updated in current year</li>
+      <li>1 year old</li>
+      <li>2 years old</li>
+      <li>3 years old</li>
+      <li>5+ years old</li>
+    </ul>
+  </div>
+</div>
+
+<!-- G -->
+<h2 id="g">G</h2>
+
+<div class="term">
+  <div class="term-name">Git</div>
+  <div class="term-desc">
+    <p>A distributed version control system used to track changes to code and configuration files. Skills and workflows are stored in GitHub repositories.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">GitHub Actions</div>
+  <div class="term-desc">
+    <p>A CI/CD platform integrated with GitHub. Used to automatically test and deploy skills when code is pushed to the repository.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Governance</div>
+  <div class="term-desc">
+    <p>The framework of policies, processes, and roles that ensure documentation quality, compliance, and accountability.</p>
+    <div class="term-example">
+      <div class="term-example-label">Key Elements</div>
+      <p>Ownership, lifecycle states, review SLAs, approval workflows.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Grafana</div>
+  <div class="term-desc">
+    <p>An open-source analytics and monitoring platform. Used to visualize skill execution metrics (success rate, duration, error rate) in real-time.</p>
+  </div>
+</div>
+
+<!-- H -->
+<h2 id="h">H</h2>
+
+<div class="term">
+  <div class="term-name">HTTP Status Codes</div>
+  <div class="term-desc">
+    <p>Numeric codes returned by web servers indicating request outcomes:</p>
+    <ul>
+      <li><strong>200 OK</strong>: Successful request</li>
+      <li><strong>401 Unauthorized</strong>: Missing or invalid credentials</li>
+      <li><strong>404 Not Found</strong>: Resource doesn't exist</li>
+      <li><strong>429 Too Many Requests</strong>: Rate limit exceeded</li>
+      <li><strong>500 Internal Server Error</strong>: Server-side failure</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Human-in-the-Loop</div>
+  <div class="term-desc">
+    <p>A design pattern where AI agents propose actions but require human approval before executing. Used for high-risk operations (archive pages, modify critical docs).</p>
+  </div>
+</div>
+
+<!-- I -->
+<h2 id="i">I</h2>
+
+<div class="term">
+  <div class="term-name">Idempotency</div>
+  <div class="term-desc">
+    <p>A property where an operation produces the same result regardless of how many times it's executed. Well-designed skills should be idempotent (running twice doesn't cause errors).</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Integration</div>
+  <div class="term-desc">
+    <p>The process of connecting different systems to work together. This project integrates:</p>
+    <ul>
+      <li><strong>Confluence</strong> (documentation platform)</li>
+      <li><strong>Jira</strong> (ticket tracking)</li>
+      <li><strong>Slack</strong> (notifications, commands)</li>
+      <li><strong>GitHub</strong> (code repository)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">ISO 8601</div>
+  <div class="term-desc">
+    <p>An international standard for date/time formatting: <code>YYYY-MM-DDTHH:MM:SSZ</code></p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p><code>2026-02-26T15:30:00Z</code> (February 26, 2026 at 3:30 PM UTC)</p>
+    </div>
+  </div>
+</div>
+
+<!-- J -->
+<h2 id="j">J</h2>
+
+<div class="term">
+  <div class="term-name">Jira</div>
+  <div class="term-desc">
+    <p>Atlassian's issue tracking and project management tool. Skills create Jira tickets for remediation tasks (e.g., "Review page XYZ - stale for 2 years").</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">JSON (JavaScript Object Notation)</div>
+  <div class="term-desc">
+    <p>A lightweight data format for structured data. APIs often return JSON responses, and skills use JSON for inputs/outputs.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>{
+  "page_id": "12345",
+  "title": "API Documentation",
+  "last_updated": "2024-06-15"
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">JSONB</div>
+  <div class="term-desc">
+    <p>A binary JSON data type in PostgreSQL. Used to store flexible skill execution logs (inputs, outputs) without defining fixed schemas.</p>
+  </div>
+</div>
+
+<!-- K -->
+<h2 id="k">K</h2>
+
+<div class="term">
+  <div class="term-name">KPI (Key Performance Indicator)</div>
+  <div class="term-desc">
+    <p>A measurable value that indicates performance toward objectives. This business case defines KPIs like:</p>
+    <ul>
+      <li>Freshness Score (90% target)</li>
+      <li>Manual Audit Hours Saved (80% reduction target)</li>
+      <li>Time to Remediation (&lt;14 days target)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Kubernetes (K8s)</div>
+  <div class="term-desc">
+    <p>An open-source container orchestration platform. In Phase 2+, skills run as Kubernetes pods, enabling horizontal scaling and high availability.</p>
+  </div>
+</div>
+
+<!-- L -->
+<h2 id="l">L</h2>
+
+<div class="term">
+  <div class="term-name">Lifecycle</div>
+  <div class="term-desc">
+    <p>The stages a document transitions through from creation to archival:</p>
+    <ol>
+      <li><strong>Draft</strong>: Work-in-progress</li>
+      <li><strong>Under Review</strong>: Submitted for approval</li>
+      <li><strong>Published</strong>: Live, searchable</li>
+      <li><strong>Review Required</strong>: Flagged as stale</li>
+      <li><strong>Archived</strong>: Historical, no longer maintained</li>
+    </ol>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Linting</div>
+  <div class="term-desc">
+    <p>Automated code analysis to detect errors, enforce style, and improve quality. Python linters: <strong>Black</strong> (formatting), <strong>Ruff</strong> (fast linting).</p>
+  </div>
+</div>
+
+<!-- M -->
+<h2 id="m">M</h2>
+
+<div class="term">
+  <div class="term-name">Markdown</div>
+  <div class="term-desc">
+    <p>A lightweight markup language for formatting text. Skills generate reports in Markdown (<code>.md</code> files) that render nicely in Confluence, GitHub, and documentation tools.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">MCP (Model Context Protocol)</div>
+  <div class="term-desc">
+    <p>A standardized protocol for AI agents to interact with external tools and data sources. In advanced implementations, agents use MCP to invoke skills.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Metadata</div>
+  <div class="term-desc">
+    <p>Information about data. In Confluence, metadata includes:</p>
+    <ul>
+      <li><strong>Owner</strong>: Person responsible for accuracy</li>
+      <li><strong>Status</strong>: Lifecycle state (draft, published, archived)</li>
+      <li><strong>Criticality</strong>: Importance level (critical, high, medium, low)</li>
+      <li><strong>Last Reviewed</strong>: Date of most recent review</li>
+      <li><strong>Tags</strong>: Categories and topics</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Microservice</div>
+  <div class="term-desc">
+    <p>A software architecture where applications are composed of small, independent services. Not directly used in Phase 1, but Phase 3+ may decompose orchestration into microservices.</p>
+  </div>
+</div>
+
+<!-- N -->
+<h2 id="n">N</h2>
+
+<div class="term">
+  <div class="term-name">NPS (Net Promoter Score)</div>
+  <div class="term-desc">
+    <p>A customer satisfaction metric based on survey responses: "How likely are you to recommend this system?" (0-10 scale).</p>
+    <div class="term-example">
+      <div class="term-example-label">Formula</div>
+      <p><code>NPS = % Promoters (9-10) - % Detractors (0-6)</code></p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Node.js</div>
+  <div class="term-desc">
+    <p>A JavaScript runtime for building server-side applications. While this project uses Python, some skills could be implemented in Node.js if needed.</p>
+  </div>
+</div>
+
+<!-- O -->
+<h2 id="o">O</h2>
+
+<div class="term">
+  <div class="term-name">OAuth 2.0</div>
+  <div class="term-desc">
+    <p>An authorization framework allowing third-party applications to access user data without exposing passwords. Slack and Jira APIs use OAuth 2.0 for secure authentication.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Observability</div>
+  <div class="term-desc">
+    <p>The ability to understand a system's internal state by examining its outputs (logs, metrics, traces). Key for debugging skill failures and optimizing performance.</p>
+    <div class="term-example">
+      <div class="term-example-label">Tools</div>
+      <p>PostgreSQL (logs), Prometheus (metrics), Grafana (dashboards).</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Orchestration</div>
+  <div class="term-desc">
+    <p>See <strong>Agent Orchestration</strong>.</p>
+  </div>
+</div>
+
+<!-- P -->
+<h2 id="p">P</h2>
+
+<div class="term">
+  <div class="term-name">Pagination</div>
+  <div class="term-desc">
+    <p>Splitting large API responses into smaller pages. Confluence API returns max 50 results per request; skills must loop through pages to retrieve all data.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>start = 0
+while True:
+    response = api.get(f"/content?start={start}&limit=50")
+    results = response.json()["results"]
+    if not results:
+        break
+    process(results)
+    start += 50</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">PagerDuty</div>
+  <div class="term-desc">
+    <p>An incident management platform. Used to alert engineers when skill failure rates exceed thresholds.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">pgvector</div>
+  <div class="term-desc">
+    <p>A PostgreSQL extension for storing and querying vector embeddings. Alternative to dedicated vector databases (Pinecone, Weaviate) for semantic search.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Pinecone</div>
+  <div class="term-desc">
+    <p>A managed vector database service for storing embeddings. Used in Search Indexer skill to enable semantic documentation search.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">PostgreSQL</div>
+  <div class="term-desc">
+    <p>An open-source relational database. Used to store:</p>
+    <ul>
+      <li>Skill execution logs</li>
+      <li>Audit trails</li>
+      <li>Workflow metadata</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Prometheus</div>
+  <div class="term-desc">
+    <p>An open-source monitoring and alerting toolkit. Collects metrics (skill execution rate, success rate, duration) for visualization in Grafana.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Pytest</div>
+  <div class="term-desc">
+    <p>A Python testing framework. Used to write unit and integration tests for skills before deployment.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Python</div>
+  <div class="term-desc">
+    <p>The primary programming language for this project. Chosen for its rich ecosystem of libraries (requests, Temporal SDK, FastAPI) and data processing capabilities.</p>
+  </div>
+</div>
+
+<!-- R -->
+<h2 id="r">R</h2>
+
+<div class="term">
+  <div class="term-name">Rate Limiting</div>
+  <div class="term-desc">
+    <p>See <strong>API Rate Limiting</strong>.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Remediation</div>
+  <div class="term-desc">
+    <p>The process of fixing identified issues (stale pages, broken links, missing metadata). Remediation may be automated (by skills) or manual (by documentation owners).</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">REST API (Representational State Transfer)</div>
+  <div class="term-desc">
+    <p>An architectural style for web services using HTTP methods (GET, POST, PUT, DELETE) to interact with resources. Confluence, Jira, and Slack expose REST APIs.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Retry Logic</div>
+  <div class="term-desc">
+    <p>A fault-tolerance mechanism where operations are automatically retried after failures. Workflow engines (Temporal) have built-in retry with exponential backoff.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">ROI (Return on Investment)</div>
+  <div class="term-desc">
+    <p>A financial metric measuring the profitability of an investment.</p>
+    <div class="term-example">
+      <div class="term-example-label">Formula</div>
+      <p><code>ROI = (Gain - Cost) / Cost × 100%</code></p>
+      <div class="term-example-label">For This Project</div>
+      <p>Savings from reduced manual audits vs. implementation/maintenance costs.</p>
+      <p><strong>Expected Payback Period</strong>: 18 months.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S -->
+<h2 id="s">S</h2>
+
+<div class="term">
+  <div class="term-name">Sandbox</div>
+  <div class="term-desc">
+    <p>A testing environment isolated from production. Skills are tested in sandbox Confluence spaces before deployment to avoid breaking live documentation.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Scheduled Job</div>
+  <div class="term-desc">
+    <p>A task that runs automatically at specified times. Orchestration platforms schedule jobs using cron expressions (e.g., "every Monday at 9 AM").</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Secrets Manager</div>
+  <div class="term-desc">
+    <p>A tool for securely storing sensitive information (API tokens, passwords). Examples: AWS Secrets Manager, HashiCorp Vault, Azure Key Vault.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Semantic Search</div>
+  <div class="term-desc">
+    <p>A search technique that understands meaning and context, not just keywords. Uses embeddings to find conceptually similar documents.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p>Searching "deployment automation" returns pages about CI/CD, even if they don't use that exact phrase.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">SLA (Service Level Agreement)</div>
+  <div class="term-desc">
+    <p>A commitment defining expected service quality. In documentation governance, SLAs specify how frequently pages must be reviewed based on criticality.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Slack</div>
+  <div class="term-desc">
+    <p>A team communication platform. Used for:</p>
+    <ul>
+      <li>Notifications (audit reports, broken link alerts)</li>
+      <li>Slash commands (<code>/audit-docs</code> to trigger skills)</li>
+      <li>Interactive approvals (buttons to approve/reject changes)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Slack Bot</div>
+  <div class="term-desc">
+    <p>An automated program that interacts with users in Slack. This project includes a bot that responds to slash commands and posts reports to channels.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Slash Command</div>
+  <div class="term-desc">
+    <p>A Slack feature where users trigger actions by typing <code>/command-name</code>. Example: <code>/audit-docs</code> triggers a freshness audit.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Skill Registry</div>
+  <div class="term-desc">
+    <p>A catalog of available skills with metadata (name, version, inputs, outputs, trust tier). The orchestration layer reads the registry to discover and invoke skills.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Status Macro</div>
+  <div class="term-desc">
+    <p>A Confluence UI element that displays colored labels ("In Progress", "Approved", "Deprecated"). Skills detect status macros in page HTML to assess approval state.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Storage Format</div>
+  <div class="term-desc">
+    <p>The internal HTML representation Confluence uses to store page content. More verbose than rendered HTML, containing macros and metadata.</p>
+  </div>
+</div>
+
+<!-- T -->
+<h2 id="t">T</h2>
+
+<div class="term">
+  <div class="term-name">Temporal</div>
+  <div class="term-desc">
+    <p>A workflow orchestration platform providing durable execution, retries, and observability. Recommended orchestration tool for Phase 2+ due to robustness.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Throttling</div>
+  <div class="term-desc">
+    <p>Intentionally slowing down operations to avoid hitting rate limits or overwhelming systems. Skills use <code>time.sleep()</code> between API requests.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Token (API)</div>
+  <div class="term-desc">
+    <p>See <strong>API Token</strong>.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Trust Tier</div>
+  <div class="term-desc">
+    <p>A classification system for skills based on risk:</p>
+    <ul>
+      <li><strong>Tier 1 (Read-Only)</strong>: High trust, low risk</li>
+      <li><strong>Tier 2 (Automated Write)</strong>: Medium trust, requires testing</li>
+      <li><strong>Tier 3 (Human-in-Loop)</strong>: Low trust, requires approval</li>
+      <li><strong>Tier 4 (Restricted)</strong>: Critical actions, requires authorization</li>
+    </ul>
+  </div>
+</div>
+
+<!-- U -->
+<h2 id="u">U</h2>
+
+<div class="term">
+  <div class="term-name">Unit Test</div>
+  <div class="term-desc">
+    <p>A test that validates individual functions or components in isolation. All skills should have unit tests to catch bugs before deployment.</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">UUID (Universally Unique Identifier)</div>
+  <div class="term-desc">
+    <p>A 128-bit identifier guaranteed to be unique. Used as primary keys in databases (e.g., skill execution ID).</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <p><code>550e8400-e29b-41d4-a716-446655440000</code></p>
+    </div>
+  </div>
+</div>
+
+<!-- V -->
+<h2 id="v">V</h2>
+
+<div class="term">
+  <div class="term-name">Validation</div>
+  <div class="term-desc">
+    <p>The process of checking data against rules or schemas. Skills validate:</p>
+    <ul>
+      <li>Metadata completeness (required fields present)</li>
+      <li>Broken links (URLs return 200 OK)</li>
+      <li>Compliance (pages meet governance policies)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Vector Database</div>
+  <div class="term-desc">
+    <p>A specialized database for storing and querying embeddings. Used in semantic search to find similar documents.</p>
+    <div class="term-example">
+      <div class="term-example-label">Examples</div>
+      <p>Pinecone, Weaviate, PostgreSQL + pgvector.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Virtual Environment (Python)</div>
+  <div class="term-desc">
+    <p>An isolated Python installation for managing project dependencies. Prevents conflicts between different projects' libraries.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>python3 -m venv .venv
+source .venv/bin/activate
+pip install requests</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- W -->
+<h2 id="w">W</h2>
+
+<div class="term">
+  <div class="term-name">Webhook</div>
+  <div class="term-desc">
+    <p>A mechanism for real-time notifications. When an event occurs (e.g., Confluence page published), a webhook sends an HTTP POST request to a configured URL.</p>
+    <div class="term-example">
+      <div class="term-example-label">Use Case</div>
+      <p>Event router receives Confluence webhooks and triggers validation skills.</p>
+    </div>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Workflow</div>
+  <div class="term-desc">
+    <p>A sequence of tasks coordinated to achieve an objective. In this project, workflows combine skills to perform end-to-end processes (audit → report → notify → remediate).</p>
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-name">Workflow Engine</div>
+  <div class="term-desc">
+    <p>Software that executes workflows, handling scheduling, retries, parallelism, and error handling.</p>
+    <div class="term-example">
+      <div class="term-example-label">Options</div>
+      <p>Temporal (recommended), Apache Airflow, Prefect.</p>
+    </div>
+  </div>
+</div>
+
+<!-- X -->
+<h2 id="x">X</h2>
+
+<div class="term">
+  <div class="term-name">XML (Extensible Markup Language)</div>
+  <div class="term-desc">
+    <p>A markup language for encoding documents. Some APIs return XML, though JSON is more common. Confluence Storage HTML contains XML-like macro syntax.</p>
+  </div>
+</div>
+
+<!-- Y -->
+<h2 id="y">Y</h2>
+
+<div class="term">
+  <div class="term-name">YAML (YAML Ain't Markup Language)</div>
+  <div class="term-desc">
+    <p>A human-readable data serialization format often used for configuration files. Workflows can be defined in YAML.</p>
+    <div class="term-example">
+      <div class="term-example-label">Example</div>
+      <pre><code>name: documentation-audit
+trigger: cron("0 9 * * MON")
+steps:
+  - audit:
+      skill: freshness-audit
+  - notify:
+      skill: slack-notifier</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Z -->
+<h2 id="z">Z</h2>
+
+<div class="term">
+  <div class="term-name">Zero Trust</div>
+  <div class="term-desc">
+    <p>A security model assuming no entity (user, service) is trustworthy by default. All API requests must be authenticated and authorized, even from internal systems.</p>
+  </div>
+</div>
+
+<!-- ACRONYMS -->
+<h2 id="acronyms">Acronyms Quick Reference</h2>
+
+<table>
+  <thead>
+    <tr><th>Acronym</th><th>Full Term</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>ADF</strong></td><td>Atlassian Document Format</td></tr>
+    <tr><td><strong>API</strong></td><td>Application Programming Interface</td></tr>
+    <tr><td><strong>CI/CD</strong></td><td>Continuous Integration / Continuous Deployment</td></tr>
+    <tr><td><strong>CLI</strong></td><td>Command-Line Interface</td></tr>
+    <tr><td><strong>CSV</strong></td><td>Comma-Separated Values</td></tr>
+    <tr><td><strong>DAG</strong></td><td>Directed Acyclic Graph</td></tr>
+    <tr><td><strong>JSON</strong></td><td>JavaScript Object Notation</td></tr>
+    <tr><td><strong>JSONB</strong></td><td>JSON Binary (PostgreSQL data type)</td></tr>
+    <tr><td><strong>K8s</strong></td><td>Kubernetes</td></tr>
+    <tr><td><strong>KPI</strong></td><td>Key Performance Indicator</td></tr>
+    <tr><td><strong>MCP</strong></td><td>Model Context Protocol</td></tr>
+    <tr><td><strong>NPS</strong></td><td>Net Promoter Score</td></tr>
+    <tr><td><strong>REST</strong></td><td>Representational State Transfer</td></tr>
+    <tr><td><strong>ROI</strong></td><td>Return on Investment</td></tr>
+    <tr><td><strong>SLA</strong></td><td>Service Level Agreement</td></tr>
+    <tr><td><strong>UUID</strong></td><td>Universally Unique Identifier</td></tr>
+    <tr><td><strong>XML</strong></td><td>Extensible Markup Language</td></tr>
+    <tr><td><strong>YAML</strong></td><td>YAML Ain't Markup Language</td></tr>
+  </tbody>
+</table>
+
+<!-- RESOURCES -->
+<h2 id="resources">Additional Resources</h2>
+
+<h3>Official Documentation</h3>
+<ul>
+  <li><strong>Confluence REST API</strong>: <a href="https://developer.atlassian.com/cloud/confluence/rest/v2/intro/" target="_blank">https://developer.atlassian.com/cloud/confluence/rest/v2/intro/</a></li>
+  <li><strong>Jira REST API</strong>: <a href="https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/" target="_blank">https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/</a></li>
+  <li><strong>Slack API</strong>: <a href="https://api.slack.com/" target="_blank">https://api.slack.com/</a></li>
+  <li><strong>Temporal Docs</strong>: <a href="https://docs.temporal.io/" target="_blank">https://docs.temporal.io/</a></li>
+  <li><strong>Apache Airflow</strong>: <a href="https://airflow.apache.org/docs/" target="_blank">https://airflow.apache.org/docs/</a></li>
+</ul>
+
+<h3>Python Libraries</h3>
+<ul>
+  <li><strong>requests</strong>: HTTP library for API calls</li>
+  <li><strong>beautifulsoup4</strong>: HTML/XML parsing</li>
+  <li><strong>pandas</strong>: Data analysis (for CSV processing)</li>
+  <li><strong>temporal-sdk</strong>: Python SDK for Temporal workflows</li>
+  <li><strong>fastapi</strong>: Web framework for APIs</li>
+  <li><strong>pytest</strong>: Testing framework</li>
+</ul>
+
+<h3>Learning Paths</h3>
+<ul>
+  <li><strong>Confluence API Basics</strong>: Start with simple GET requests to retrieve pages</li>
+  <li><strong>Python for APIs</strong>: Learn <code>requests</code> library, JSON parsing, error handling</li>
+  <li><strong>Docker Fundamentals</strong>: Understand containers, images, Docker Compose</li>
+  <li><strong>Workflow Orchestration</strong>: Study Temporal or Airflow tutorials</li>
+</ul>
+
+<!-- NAVIGATION -->
+<div class="nav-link">
+  <a href="index.html">← Back to Operating Model</a>
+</div>
+
+<div class="doc-footer">
+  <span>WebBeds — AI-Powered Documentation Operating Model · Technical Glossary</span>
+  <span>Confidential — Internal Use Only · February 2026</span>
+</div>
+
+</body>
+</html>

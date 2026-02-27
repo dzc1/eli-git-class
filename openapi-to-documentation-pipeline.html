@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenAPI-to-Documentation Pipeline – WebBeds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a2e; --mid: #4a4a6a; --soft: #7a7a9a;
+    --accent: #2563eb; --accent2: #7c3aed;
+    --bg: #ffffff; --surface: #f8f8fc; --border: #e4e4f0;
+    --warn: #dc2626; --ok: #16a34a; --amber: #d97706;
+    --radius: 8px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+  html { font-size: 15px; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 2.8rem 0 .75rem; padding-bottom: .4rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .5rem; }
+  h4 { font-size: .93rem; font-weight: 600; color: var(--mid); margin: 1.2rem 0 .3rem; }
+  p  { margin-bottom: .9rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+  li { margin-bottom: .3rem; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .82rem; background: #f0f0f8; padding: .15em .4em; border-radius: 4px; color: var(--accent2); }
+  pre { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 1.2rem 1.4rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; margin: 1rem 0 1.4rem; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Cover */
+  .cover { display: flex; flex-direction: column; min-height: 260px; justify-content: flex-end; border-bottom: 3px solid var(--accent); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  .cover-subtitle { font-size: 1.1rem; color: var(--mid); margin-top: .5rem; max-width: 600px; line-height: 1.5; }
+  .cover-meta { margin-top: 1.6rem; font-size: .82rem; color: var(--soft); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cover-meta span strong { color: var(--mid); }
+
+  /* Callouts */
+  .callout { border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+  .callout.warn  { border-color: var(--warn); }
+  .callout.ok    { border-color: var(--ok); }
+  .callout.amber { border-color: var(--amber); }
+  .callout p { margin: 0; font-size: .92rem; }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; color: var(--accent); }
+  .callout.warn .callout-label  { color: var(--warn); }
+  .callout.ok .callout-label    { color: var(--ok); }
+  .callout.amber .callout-label { color: var(--amber); }
+
+  /* Badge */
+  .badge { display: inline-flex; align-items: center; padding: .2em .65em; border-radius: 999px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .badge-p1 { background: #fee2e2; color: var(--warn); }
+  .badge-p2 { background: #fef3c7; color: #92400e; }
+  .badge-p3 { background: #ecfdf5; color: #065f46; }
+
+  .nav-link { display: inline-block; margin-top: 2rem; }
+  .nav-link a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: .9rem; }
+  .nav-link a:hover { text-decoration: underline; }
+
+  .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+
+  @media print {
+    body { padding: 20px 24px 40px; font-size: 13px; }
+    .cover { min-height: auto; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Agentic Skill — Documentation Generation</div>
+  <h1>OpenAPI-to-Documentation Pipeline</h1>
+  <p class="cover-subtitle">Automatically generate interactive API reference documentation from OpenAPI/Swagger specifications, keeping documentation in sync with API changes.</p>
+  <div class="cover-meta">
+    <span><strong>Skill Name:</strong> <code>openapi-docs-generator</code></span>
+    <span><strong>Priority:</strong> <span class="badge badge-p1">P1</span></span>
+    <span><strong>Timeline:</strong> Month 2 (Phase 1)</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<h2>How It Works</h2>
+
+<ol>
+  <li>Skill monitors repositories for <code>openapi.yaml</code> or <code>swagger.json</code> files</li>
+  <li>On detection, parses API specification (endpoints, parameters, responses)</li>
+  <li>Uses AI to generate human-readable descriptions for each endpoint</li>
+  <li>Produces interactive API reference documentation (HTML/Markdown)</li>
+  <li>Publishes to Confluence space dedicated to API documentation</li>
+</ol>
+
+<!-- EXAMPLE OUTPUT -->
+<h2>Example Output</h2>
+
+<p>When the skill detects a change to an OpenAPI specification:</p>
+
+<pre><code>Input:  /api/bookings POST endpoint in openapi.yaml
+
+Output: "Create Hotel Booking" page with:
+        - Endpoint description
+        - Request parameters (with examples)
+        - Response schemas
+        - Error codes explained
+        - Code samples (Python, JavaScript, cURL)</code></pre>
+
+<p>The generated documentation automatically includes:</p>
+<ul>
+  <li>All endpoint paths with HTTP methods</li>
+  <li>Request/response schemas with type information</li>
+  <li>Authentication and authorization requirements</li>
+  <li>Practical code examples in multiple languages</li>
+  <li>Rate limiting and quota information</li>
+  <li>Error responses with remediation guidance</li>
+</ul>
+
+<!-- BENEFITS -->
+<h2>Benefits</h2>
+
+<div class="callout ok">
+  <div class="callout-label">Key Outcomes</div>
+  <p><strong>API documentation always in sync with OpenAPI spec</strong> · Engineers update spec, documentation auto-generates · <strong>Reduces manual API reference writing by 90%</strong> · Interactive docs improve developer experience · Version-specific documentation for multiple API versions</p>
+</div>
+
+<ul>
+  <li><strong>Single Source of Truth:</strong> API specification drives documentation; changes automatically propagate</li>
+  <li><strong>Reduced Maintenance:</strong> Engineers focus on spec accuracy, not manual doc writing</li>
+  <li><strong>Consistency:</strong> All API endpoints documented in standardised format</li>
+  <li><strong>Developer Experience:</strong> Try-it-out functionality for interactive API testing</li>
+  <li><strong>Version Control:</strong> Documentation versioned alongside API releases</li>
+</ul>
+
+<!-- TOOLING INTEGRATION -->
+<h2>Tooling Integration</h2>
+
+<p>The pipeline integrates with industry-standard tools:</p>
+
+<ul>
+  <li><strong>Rendering:</strong> Redoc, Stoplight, or OpenAPI Generator for interactive documentation</li>
+  <li><strong>AI Enhancement:</strong> GPT-4, Claude for natural language descriptions and example generation</li>
+  <li><strong>Triggers:</strong> GitHub/GitLab webhooks for repository events (push, tag, PR)</li>
+  <li><strong>Publication:</strong> Confluence REST API for automated publishing and versioning</li>
+  <li><strong>Validation:</strong> Spectacle or OpenAPI Linter to ensure spec compliance</li>
+</ul>
+
+<!-- IMPLEMENTATION DETAILS -->
+<h2>Implementation Details</h2>
+
+<h3>Trigger Events</h3>
+<p>The skill is triggered when:</p>
+<ul>
+  <li>OpenAPI specification file is modified</li>
+  <li>New API version tag is pushed to repository</li>
+  <li>Scheduled refresh on daily/weekly basis</li>
+  <li>Manual trigger via CLI or GUI</li>
+</ul>
+
+<h3>Quality Validation</h3>
+<p>Before publishing, the skill validates:</p>
+<ul>
+  <li>OpenAPI spec compliance (using validators)</li>
+  <li>Generated documentation completeness</li>
+  <li>Code example executability</li>
+  <li>Link integrity and cross-references</li>
+  <li>AI confidence scoring for descriptions</li>
+</ul>
+
+<h3>Version Management</h3>
+<p>The skill supports multiple API versions:</p>
+<ul>
+  <li>Current/stable API documentation</li>
+  <li>Beta/preview API documentation</li>
+  <li>Deprecated API versions with migration guidance</li>
+  <li>Feature flag documentation for optional endpoints</li>
+</ul>
+
+<!-- STATUS -->
+<h2>Status & Timeline</h2>
+
+<div class="callout">
+  <div class="callout-label">Implementation Status</div>
+  <p><strong>Priority:</strong> 1 (Core generation capability) · <strong>Phase:</strong> Phase 1 · <strong>Timeline:</strong> Month 2 · <strong>Status:</strong> Planning & Requirements</p>
+</div>
+
+<h3>Acceptance Criteria</h3>
+<ul>
+  <li>✅ Generates compliant interactive API documentation from OpenAPI 3.0+ specs</li>
+  <li>✅ Includes request/response examples in Python, JavaScript, and cURL</li>
+  <li>✅ Validates generated documentation against source OpenAPI spec</li>
+  <li>✅ Publishes to Confluence with version-specific organization</li>
+  <li>✅ Handles multiple API versions simultaneously</li>
+  <li>✅ Includes AI-confidence scoring for human review</li>
+  <li>✅ Updates documentation automatically on spec changes</li>
+</ul>
+
+<!-- INTEGRATION WITH MAIN PIPELINE -->
+<h2>Integration with Documentation Operating Model</h2>
+
+<p>This skill is part of <strong>Layer 1: AI-Assisted Documentation Generation</strong> in the broader documentation infrastructure. It works in coordination with:</p>
+
+<ul>
+  <li><strong>changelog-automator:</strong> Detects API changes and triggers documentation refresh</li>
+  <li><strong>version-manager:</strong> Maintains parallel documentation for multiple API versions</li>
+  <li><strong>broken-link-detector:</strong> Validates generated documentation links</li>
+  <li><strong>missing-metadata-enforcer:</strong> Ensures all generated pages include required metadata</li>
+</ul>
+
+<p>In the release workflow, this skill is invoked after a Git tag is pushed (e.g., <code>v2.1.0</code>), executing in parallel with other documentation generation skills to produce comprehensive release documentation.</p>
+
+<!-- NAVIGATION -->
+<div class="nav-link">
+  <a href="index.html">← Back to Operating Model</a> | 
+  <a href="technical-glossary.html">View Technical Glossary →</a>
+</div>
+
+<div class="doc-footer">
+  <span>WebBeds — AI-Powered Documentation Operating Model · Agentic Skill Detail</span>
+  <span>Confidential — Internal Use Only · February 2026</span>
+</div>
+
+</body>
+</html>
