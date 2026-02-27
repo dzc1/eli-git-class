@@ -154,7 +154,7 @@
   <li><strong>Zero Manual Effort:</strong> Release notes created automatically without manual compilation</li>
   <li><strong>Consistent Format:</strong> Every release uses the same standardised structure and formatting</li>
   <li><strong>Jira Integration:</strong> Ticket IDs automatically extracted and linked from commits</li>
-  <li><strong>Stakeholder Notifications:</strong> Release announcements sent automatically to Slack and email</li>
+  <li><strong>Stakeholder Notifications:</strong> Release announcements sent automatically to Microsoft Teams and email</li>
   <li><strong>Version Tracking:</strong> Complete git history automatically captured and organized</li>
   <li><strong>Reduced Documentation Debt:</strong> No manual changelog maintenance required</li>
 </ul>
@@ -215,7 +215,7 @@ BREAKING CHANGE: /search endpoint now returns paginated results with limit/offse
   <li><strong>Commit Parser:</strong> Commitlint or custom parser validates Conventional Commits format</li>
   <li><strong>Version Detection:</strong> Git tagging with semantic versioning for release identification</li>
   <li><strong>Ticket Linking:</strong> Jira REST API to extract and link ticket IDs from commit messages</li>
-  <li><strong>Notifications:</strong> Slack API and email service for stakeholder alerts</li>
+  <li><strong>Notifications:</strong> Microsoft Teams API and email service for stakeholder alerts</li>
   <li><strong>Publication:</strong> GitHub Releases API and Confluence REST API for multi-channel publishing</li>
 </ul>
 
@@ -232,7 +232,7 @@ BREAKING CHANGE: /search endpoint now returns paginated results with limit/offse
   <li>Creates CHANGELOG.md file and commits to repository</li>
   <li>Publishes to GitHub Releases with formatted notes</li>
   <li>Posts to Confluence in "Releases" space</li>
-  <li>Sends Slack notification to <code>#releases</code> channel</li>
+  <li>Sends Microsoft Teams notification to the <code>releases</code> channel</li>
   <li>Notifies support/product teams with distribution links</li>
 </ol>
 
@@ -265,7 +265,7 @@ BREAKING CHANGE: /search endpoint now returns paginated results with limit/offse
   <li>✅ Extracts and links Jira ticket IDs</li>
   <li>✅ Detects and highlights breaking changes</li>
   <li>✅ Publishes to Confluence and GitHub Releases</li>
-  <li>✅ Sends Slack notifications to relevant channels</li>
+  <li>✅ Sends Microsoft Teams notifications to relevant channels</li>
   <li>✅ Enforces commit message standards via CI/CD</li>
 </ul>
 
