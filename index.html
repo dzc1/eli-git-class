@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Powered Documentation Operating Model – WebBeds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a2e; --mid: #4a4a6a; --soft: #7a7a9a;
+    --accent: #2563eb; --accent2: #7c3aed;
+    --bg: #ffffff; --surface: #f8f8fc; --border: #e4e4f0;
+    --warn: #dc2626; --ok: #16a34a; --amber: #d97706;
+    --radius: 8px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+  html { font-size: 15px; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; }
+  h2 { font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 2.8rem 0 .75rem; padding-bottom: .4rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .5rem; }
+  h4 { font-size: .93rem; font-weight: 600; color: var(--mid); margin: 1.2rem 0 .3rem; }
+  p  { margin-bottom: .9rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+  li { margin-bottom: .3rem; }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: .82rem; background: #f0f0f8; padding: .15em .4em; border-radius: 4px; color: var(--accent2); }
+  pre { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 1.2rem 1.4rem; overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.6; margin: 1rem 0 1.4rem; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Cover */
+  .cover { display: flex; flex-direction: column; min-height: 260px; justify-content: flex-end; border-bottom: 3px solid var(--accent); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  .cover-subtitle { font-size: 1.1rem; color: var(--mid); margin-top: .5rem; max-width: 600px; line-height: 1.5; }
+  .cover-meta { margin-top: 1.6rem; font-size: .82rem; color: var(--soft); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .cover-meta span strong { color: var(--mid); }
+
+  /* Callouts */
+  .callout { border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+  .callout.warn  { border-color: var(--warn); }
+  .callout.ok    { border-color: var(--ok); }
+  .callout.amber { border-color: var(--amber); }
+  .callout p { margin: 0; font-size: .92rem; }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; color: var(--accent); }
+  .callout.warn .callout-label  { color: var(--warn); }
+  .callout.ok .callout-label    { color: var(--ok); }
+  .callout.amber .callout-label { color: var(--amber); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; text-align: center; }
+  .stat-card .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--accent); line-height: 1.1; }
+  .stat-card .stat-label { font-size: .78rem; color: var(--soft); margin-top: .3rem; line-height: 1.3; }
+
+  /* Key outcomes grid */
+  .outcomes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; margin: 1.2rem 0; }
+  .outcome-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .9rem 1.1rem; }
+  .outcome-card .oc-title { font-weight: 600; font-size: .88rem; color: var(--accent); margin-bottom: .25rem; }
+  .outcome-card .oc-desc { font-size: .82rem; color: var(--mid); }
+
+  /* Layers */
+  .layer { border: 1px solid var(--border); border-radius: var(--radius); margin: 1rem 0; overflow: hidden; }
+  .layer-header { display: flex; align-items: center; gap: .8rem; padding: .8rem 1.2rem; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .layer-num { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .layer-title { font-weight: 600; font-size: .95rem; }
+  .layer-purpose { font-size: .8rem; color: var(--soft); }
+  .layer-body { padding: .9rem 1.2rem; font-size: .9rem; }
+  .layer-body p { margin-bottom: .6rem; font-size: .9rem; }
+
+  /* Sub-skill cards inside layers */
+  .skill-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem 1rem; margin: .6rem 0; }
+  .skill-block .sb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .3rem; }
+  .skill-block .sb-name { font-family: var(--mono); font-size: .82rem; color: var(--accent2); font-weight: 600; }
+  .skill-block .sb-badge { font-size: .7rem; font-weight: 700; background: #ede9fe; color: var(--accent2); border-radius: 999px; padding: .15em .6em; }
+  .skill-block .sb-desc { font-size: .82rem; color: var(--mid); }
+  .skill-block .sb-benefit { font-size: .78rem; color: var(--ok); margin-top: .3rem; font-weight: 600; }
+
+  /* Flow */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 1.2rem 0; }
+  .flow-step { display: flex; align-items: stretch; }
+  .flow-left { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
+  .flow-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--accent); flex-shrink: 0; margin-top: 4px; }
+  .flow-dot.human { background: var(--accent2); box-shadow: 0 0 0 2px var(--accent2); }
+  .flow-dot.gate  { background: var(--amber);   box-shadow: 0 0 0 2px var(--amber); }
+  .flow-dot.pub   { background: var(--ok);      box-shadow: 0 0 0 2px var(--ok); }
+  .flow-line { width: 2px; flex: 1; background: var(--border); margin: 2px 0; min-height: 20px; }
+  .flow-content { padding: 0 0 1.2rem 1rem; flex: 1; }
+  .flow-title { font-weight: 600; font-size: .9rem; color: var(--ink); }
+  .flow-desc  { font-size: .82rem; color: var(--mid); margin-top: .15rem; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; margin: 1rem 0 1.4rem; }
+  th { background: var(--surface); color: var(--mid); font-weight: 600; text-align: left; padding: .55rem .8rem; border-bottom: 2px solid var(--border); font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+  td { padding: .5rem .8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  /* Comparison table */
+  .compare-table th:nth-child(1) { background: #fef2f2; color: var(--warn); }
+  .compare-table th:nth-child(2) { background: #f0fdf4; color: var(--ok); }
+  .compare-table td:nth-child(1) { color: var(--mid); }
+  .compare-table td:nth-child(2) { color: var(--ink); font-weight: 500; }
+
+  /* Training phases */
+  .training-phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .8rem; margin: 1rem 0; }
+  .training-phase { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .tp-header { padding: .5rem .9rem; font-weight: 700; font-size: .8rem; color: #fff; }
+  .tp-1 .tp-header { background: var(--accent); }
+  .tp-2 .tp-header { background: var(--accent2); }
+  .tp-3 .tp-header { background: #0891b2; }
+  .tp-4 .tp-header { background: var(--ok); }
+  .tp-body { padding: .6rem .9rem; font-size: .8rem; color: var(--mid); }
+
+  /* Governance flow */
+  .gov-flow { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin: 1.2rem 0; font-family: var(--mono); font-size: .78rem; line-height: 1.9; color: var(--ink); white-space: pre; overflow-x: auto; }
+
+  /* Roadmap */
+  .roadmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin: 1.2rem 0; }
+  .phase { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .phase-header { padding: .6rem .9rem; font-weight: 700; font-size: .82rem; color: #fff; }
+  .phase-1 .phase-header { background: var(--accent); }
+  .phase-2 .phase-header { background: var(--accent2); }
+  .phase-3 .phase-header { background: #0891b2; }
+  .phase-4 .phase-header { background: var(--ok); }
+  .phase-body { padding: .7rem .9rem; font-size: .8rem; }
+  .phase-body ul { padding-left: 1rem; }
+  .phase-body li { margin-bottom: .2rem; }
+  .phase-months { font-size: .72rem; color: var(--soft); margin-bottom: .4rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+  .phase-success { margin-top: .5rem; font-size: .75rem; color: #4a4a6a; padding-top: .4rem; border-top: 1px solid var(--border); }
+
+  /* Risks */
+  .risk-grid { display: flex; flex-direction: column; gap: .8rem; margin: 1rem 0; }
+  .risk-item { border: 1px solid var(--border); border-radius: var(--radius); padding: .9rem 1.1rem; }
+  .risk-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; margin-bottom: .4rem; }
+  .risk-title { font-weight: 600; font-size: .92rem; }
+  .risk-owner { font-size: .76rem; color: var(--soft); margin-top: .4rem; }
+  .risk-mitigation { font-size: .83rem; color: var(--mid); }
+  .risk-mitigation ul { margin: .3rem 0 0; }
+  .badge { display: inline-flex; align-items: center; padding: .2em .65em; border-radius: 999px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; flex-shrink: 0; }
+  .badge-critical { background: #fee2e2; color: var(--warn); }
+  .badge-high     { background: #fef3c7; color: #92400e; }
+  .badge-medium   { background: #ecfdf5; color: #065f46; }
+
+  .kpi-delta { color: var(--ok); font-weight: 600; }
+
+  hr.section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+  .doc-footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: .75rem; color: var(--soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+
+  @media print {
+    body { padding: 20px 24px 40px; font-size: 13px; }
+    .cover { min-height: auto; }
+    .roadmap, .training-phases { grid-template-columns: repeat(2, 1fr); }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Business Case — Technical Writing Lead</div>
+  <h1>AI-Powered Documentation<br>Operating Model</h1>
+  <p class="cover-subtitle">A proposal for redesigning the documentation lifecycle at WebBeds — from reactive, manual authoring to intelligent, automated content infrastructure.</p>
+  <div class="cover-meta">
+    <span><strong>Submitted to:</strong> WebBeds Engineering &amp; Documentation Leadership</span>
+    <span><strong>Role:</strong> Technical Writing Lead</span>
+    <span><strong>Date:</strong> February 2026</span>
+  </div>
+</div>
+
+
+<!-- EXECUTIVE SUMMARY -->
+<h2>Executive Summary</h2>
+
+<p>Documentation at WebBeds is a lagging indicator. It follows releases, depends on individuals, and reflects yesterday's product. Engineers carry tribal knowledge that never gets written down. Support teams receive recurring tickets — both internal and external — that are, at their core, documentation failures. New joiners spend months piecing together an understanding of systems that could, and should, be captured automatically.</p>
+
+<p>This is not a resourcing problem. It is a <strong>structural one</strong>. And it has a structural solution.</p>
+
+<p>This proposal redefines documentation as <strong>intelligent infrastructure</strong> — content that is generated from code, governed automatically, versioned alongside releases, and always in sync with what ships. The Technical Writing Lead role becomes the engineer of that infrastructure: setting standards, governing AI outputs, training teams, and ensuring the organisation's knowledge is a strategic asset rather than a maintenance burden.</p>
+
+<div class="stats">
+  <div class="stat-card"><div class="stat-num">13,981</div><div class="stat-label">total Confluence pages in the organisation</div></div>
+  <div class="stat-card"><div class="stat-num">3,820</div><div class="stat-label">pages not updated in 5+ years (27%)</div></div>
+  <div class="stat-card"><div class="stat-num">6 mo</div><div class="stat-label">maximum onboarding time before full independence</div></div>
+  <div class="stat-card"><div class="stat-num">72 hrs</div><div class="stat-label">per week spent on manual documentation effort</div></div>
+</div>
+
+<h3>Primary Objective — AI-Assisted Documentation Generation</h3>
+<p>Generate documentation directly from code using agentic skills that convert OpenAPI/Swagger specifications into interactive API reference docs, extract docstrings into SDK guides, transform Git commits into automated changelogs, parse database schemas into data model documentation, and analyse architectural patterns into system design docs.</p>
+
+<h3>Secondary Objective — Documentation Governance &amp; Maintenance</h3>
+<p>With 3,820 stale Confluence pages, the organisation needs automated freshness auditing, standardised validation across all documentation, a version-aware strategy spanning Confluence and GitHub, and continuous quality monitoring with automated remediation.</p>
+
+<h3>Key Outcomes</h3>
+<div class="outcomes">
+  <div class="outcome-card"><div class="oc-title">Content Velocity</div><div class="oc-desc">Generate documentation in minutes, not days</div></div>
+  <div class="outcome-card"><div class="oc-title">Developer Productivity</div><div class="oc-desc">Engineers focus on code; AI generates docs automatically</div></div>
+  <div class="outcome-card"><div class="oc-title">Documentation Accuracy</div><div class="oc-desc">Single source of truth — the code — drives all documentation</div></div>
+  <div class="outcome-card"><div class="oc-title">Customer Experience</div><div class="oc-desc">Fresh, accurate docs improve onboarding and reduce support cases</div></div>
+  <div class="outcome-card"><div class="oc-title">Operational Efficiency</div><div class="oc-desc">Reduce manual documentation effort by 80%</div></div>
+  <div class="outcome-card"><div class="oc-title">Version Control</div><div class="oc-desc">Git-based workflows for documentation alongside code</div></div>
+</div>
+
+<div class="callout ok">
+  <div class="callout-label">Target State — Month 12</div>
+  <p>90% of reference documentation auto-generated · Onboarding reduced to 2–3 months · Manual docs effort cut from 72 hrs/week to 15 hrs/week · Internal documentation questions below 15/week</p>
+</div>
+
+
+<!-- VISION -->
+<h2>Vision: Documentation as Intelligent Infrastructure</h2>
+
+<h3>The Problem — Documentation as an Afterthought</h3>
+<p>Traditional documentation workflows at WebBeds face five critical structural challenges:</p>
+<ul>
+  <li><strong>Reactive, not proactive:</strong> Documentation created after features ship, often incomplete or outdated</li>
+  <li><strong>Manual bottleneck:</strong> Technical writers depend on engineering handoffs, tribal knowledge, and manual processes</li>
+  <li><strong>Single point of failure:</strong> Knowledge trapped in individuals, not captured systematically</li>
+  <li><strong>Version drift:</strong> Code evolves daily; documentation reviewed quarterly at best</li>
+  <li><strong>Inconsistent quality:</strong> No standardised structure, formatting, or validation across the organisation</li>
+</ul>
+
+<div class="callout warn">
+  <div class="callout-label">Current State Reality</div>
+  <p>Documentation lags releases by weeks or months · API changes can break integration guides without detection · Release notes manually compiled from scattered Jira tickets · 27% of Confluence pages not updated in 5+ years</p>
+</div>
+
+<h3>The Paradigm Shift — Documentation as Code</h3>
+<p>The proposal treats documentation as intelligent infrastructure that operates on four principles:</p>
+
+<p><strong>1. Generates from source.</strong> Documentation is derived from code, not written separately. API schemas become API reference pages. Docstrings become SDK documentation. Git commits become changelogs. Database migrations become schema documentation. Agentic skills scan repositories, extract metadata, and generate human-readable content using AI-powered natural language generation.</p>
+
+<p><strong>2. Lives in version control.</strong> Documentation follows the software development lifecycle — stored in Git repositories alongside code, branched and versioned with releases, reviewed through pull requests, and deployed automatically on merge. Skills monitor repository changes, trigger documentation updates, and publish versioned artefacts to Confluence and external portals.</p>
+
+<p><strong>3. Validates continuously.</strong> Documentation quality is enforced through automated checks: broken link detection, code example validation, metadata completeness, and freshness enforcement. Governance skills audit generated documentation, flag issues, and create remediation tickets automatically.</p>
+
+<p><strong>4. Educates the organisation.</strong> Technical writers become documentation engineers. They learn Git workflows, use AI-assisted authoring tools, configure and monitor agentic skills, and focus on high-value editorial work rather than manual page creation.</p>
+
+
+<!-- THE OPERATING MODEL -->
+<h2>The Operating Model — Five Interconnected Layers</h2>
+
+<!-- Layer 1 -->
+<div class="layer">
+  <div class="layer-header">
+    <div class="layer-num">1</div>
+    <div>
+      <div class="layer-title">AI-Assisted Documentation Generation</div>
+      <div class="layer-purpose">Automatically generate documentation from code repositories, API schemas, and commit history</div>
+    </div>
+  </div>
+  <div class="layer-body">
+
+    <div class="skill-block">
+      <div class="sb-header"><span class="sb-name">openapi-docs-generator</span><span class="sb-badge">P1</span></div>
+      <div class="sb-desc">Generates interactive API reference documentation from OpenAPI/Swagger specifications. Automatically converts technical API schemas into human-readable documentation with examples, error codes, and code samples.</div>
+      <div class="sb-benefit">✓ API docs always in sync with spec · 90% reduction in manual API documentation</div>
+    </div>
+
+    <div class="skill-block">
+      <div class="sb-header"><span class="sb-name">docstring-extractor</span><span class="sb-badge">P1</span></div>
+      <div class="sb-desc">Extracts docstrings from Python/JavaScript code and generates comprehensive SDK reference documentation. Version-aware to support multiple SDK versions simultaneously.</div>
+      <div class="sb-benefit">✓ SDK docs generated from source code · 85% reduction in manual SDK documentation</div>
+    </div>
+
+    <div class="skill-block">
+      <div class="sb-header"><span class="sb-name">changelog-automator</span><span class="sb-badge">P1</span></div>
+      <div class="sb-desc">Parses Git commit history using the Conventional Commits standard and auto-generates release notes. Groups changes by type — features, fixes, breaking changes — and publishes to Confluence and GitHub.</div>
+      <div class="sb-benefit">✓ Zero manual changelog writing · Consistent release note format · Immediate stakeholder notifications</div>
+    </div>
+
+    <div class="skill-block">
+      <div class="sb-header"><span class="sb-name">schema-documenter</span><span class="sb-badge">P2</span></div>
+      <div class="sb-desc">Monitors database migration files and generates data model documentation with ER diagrams. Explains table purposes, relationships, and column definitions automatically.</div>
+      <div class="sb-benefit">✓ Schema docs always in sync with migrations · Visual ER diagrams for faster onboarding</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Layer 2 -->
+<div class="layer">
+  <div class="layer-header">
+    <div class="layer-num">2</div>
+    <div>
+      <div class="layer-title">Governance &amp; Quality Assurance</div>
+      <div class="layer-purpose">Ensure generated documentation meets quality standards and remains fresh</div>
+    </div>
+  </div>
+  <div class="layer-body">
+    <p>Four governance skills enforce quality automatically:</p>
+    <ul>
+      <li><strong>confluence-freshness-audit</strong> — scans Confluence pages and flags stale content based on configurable age thresholds <em>(Implemented)</em></li>
+      <li><strong>broken-link-detector</strong> — validates all links across documentation spaces and reports broken references <em>(P2)</em></li>
+      <li><strong>missing-metadata-enforcer</strong> — ensures all pages carry required metadata: owner, status, version tags <em>(P2)</em></li>
+      <li><strong>Compliance reporting</strong> — generates monthly governance reports for leadership</li>
+    </ul>
+    <p>Governance skills validate AI-generated documentation <em>before</em> publishing. If quality checks fail, content is escalated to human reviewers. Full audit trails track which content was AI-generated versus human-edited.</p>
+  </div>
+</div>
+
+<!-- Layer 3 -->
+<div class="layer">
+  <div class="layer-header">
+    <div class="layer-num">3</div>
+    <div>
+      <div class="layer-title">Version-Aware Documentation Strategy</div>
+      <div class="layer-purpose">Manage documentation across multiple product versions, environments, and feature flags</div>
+    </div>
+  </div>
+  <div class="layer-body">
+    <p>WebBeds runs multiple product versions in production simultaneously. Documentation must reflect what is available in each version.</p>
+
+    <h4>Multi-Version Architecture</h4>
+    <p>The <code>version-manager</code> skill maintains parallel documentation sets per Git tag:</p>
+    <pre><code>├── API Documentation (v1 - Deprecated)
+├── API Documentation (v2 - Current)
+│   └── Multi-Currency Support (NEW)
+└── API Documentation (v3 - Beta)
+    ├── GraphQL API Introduction (NEW)
+    └── Federated Search (NEW)</code></pre>
+
+    <h4>Feature Flag Documentation</h4>
+    <p>The <code>feature-flag-documenter</code> scans the codebase for feature flag definitions, detects which features are enabled or disabled per environment, and generates availability matrices automatically. Example output:</p>
+    <pre><code>## Multi-Currency Booking (🚧 Beta - available in staging only)
+
+**Availability**:
+- Production: ❌ Not yet available
+- Staging:    ✅ Enabled for testing
+- Expected GA: March 2026</code></pre>
+
+    <h4>Two-Repository Strategy</h4>
+    <ul>
+      <li><strong>GitHub repositories</strong> (source of truth for code-generated docs): SDK and API reference documentation stored alongside code; changelogs auto-committed on each release</li>
+      <li><strong>Confluence</strong> (publication layer + long-form content): AI-generated documentation published for discoverability; technical writers add high-level guides and tutorials</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Layer 4 -->
+<div class="layer">
+  <div class="layer-header">
+    <div class="layer-num">4</div>
+    <div>
+      <div class="layer-title">Orchestration &amp; Workflow Engine</div>
+      <div class="layer-purpose">Coordinate agentic skills to execute complex documentation workflows triggered by code events</div>
+    </div>
+  </div>
+  <div class="layer-body">
+    <ul>
+      <li>DAG-based workflow execution (Temporal, Apache Airflow, or custom orchestrator)</li>
+      <li>Event-driven triggers: Git push, Confluence page update, scheduled jobs</li>
+      <li>Human-in-the-loop gates for low-confidence AI outputs or hallucinations</li>
+      <li>Retry logic and error handling built into every pipeline</li>
+    </ul>
+
+    <h4>Example Workflow — "Publish API Documentation on Release"</h4>
+    <pre><code>trigger: Git tag pushed (e.g. v2.1.0)
+
+workflow:
+  1. run: changelog-automator
+     input:  compare v2.0.0...v2.1.0
+     output: CHANGELOG.md
+
+  2. run: openapi-docs-generator
+     input:  openapi.yaml from v2.1.0 tag
+     output: API reference pages
+
+  3. run: docstring-extractor
+     input:  Python SDK repo at v2.1.0 tag
+     output: SDK documentation
+
+  4. parallel:
+     - publish: CHANGELOG.md → Confluence
+     - publish: API reference → Confluence (v2.1 space)
+     - publish: SDK docs     → Confluence (v2.1 SDK section)
+
+  5. run: broken-link-detector
+     input:  newly published Confluence pages
+     output: validation report
+
+  6. if: validation.errors > 0
+     then: notify #documentation-team (Slack)
+     else: notify #releases "Docs published ✅"</code></pre>
+  </div>
+</div>
+
+<!-- Layer 5 -->
+<div class="layer">
+  <div class="layer-header">
+    <div class="layer-num">5</div>
+    <div>
+      <div class="layer-title">Training &amp; Transition Management</div>
+      <div class="layer-purpose">Transition technical writers into documentation engineers; train engineers to write AI-friendly code</div>
+    </div>
+  </div>
+  <div class="layer-body">
+    <h4>Writer Training Programme — "From Writer to Documentation Engineer" (6 months)</h4>
+    <div class="training-phases">
+      <div class="training-phase tp-1"><div class="tp-header">Phase 1</div><div class="tp-body"><strong>Git Fundamentals</strong><br>Weeks 1–4</div></div>
+      <div class="training-phase tp-2"><div class="tp-header">Phase 2</div><div class="tp-body"><strong>Agentic Tools &amp; AI-Assisted Authoring</strong><br>Weeks 5–8</div></div>
+      <div class="training-phase tp-3"><div class="tp-header">Phase 3</div><div class="tp-body"><strong>Advanced Workflows &amp; Orchestration</strong><br>Weeks 9–12</div></div>
+      <div class="training-phase tp-4"><div class="tp-header">Phase 4</div><div class="tp-body"><strong>Continuous Learning</strong><br>Months 4–6</div></div>
+    </div>
+
+    <h4>Engineer Training — "Writing AI-Friendly Code"</h4>
+    <p>Engineers are trained to write AI-parseable code annotations using standardised docstring formats and Conventional Commit messages. This training also covers guidelines on avoiding sensitive content in code annotations — directly cross-referenced with the sensitive information leakage risk mitigation strategy.</p>
+
+    <pre><code># ✅ Good — AI can parse this reliably
+def search_hotels(location: str, check_in: date, check_out: date) -> list[Hotel]:
+    """
+    Search for available hotels in a location for specific dates.
+
+    Args:
+        location: City name or geographic coordinates
+        check_in: Check-in date (must be future date)
+        check_out: Check-out date (must be after check-in)
+
+    Returns:
+        List of Hotel objects with availability and pricing
+
+    Raises:
+        ValueError: If dates are invalid or check-out before check-in
+    """
+
+# ❌ Bad — AI cannot reliably interpret intent
+def sh(loc, ci, co):
+    # search hotels
+    pass</code></pre>
+
+    <pre><code># ✅ Good — changelog-automator can classify and group this
+feat(booking): add multi-currency support for EUR and GBP
+
+# ❌ Bad — produces unusable changelogs
+fixed stuff</code></pre>
+
+    <h4>Cultural Shift — Manual Authoring → Content Stewardship</h4>
+    <table class="compare-table">
+      <thead><tr><th>Old Model</th><th>New Model</th></tr></thead>
+      <tbody>
+        <tr><td>Writer gets Jira ticket, interviews engineer, writes doc from scratch</td><td>Engineer writes spec and docstrings; agentic skill auto-generates docs</td></tr>
+        <tr><td>Doc manually updated on each API change</td><td>Technical writer reviews AI output for clarity and accuracy</td></tr>
+        <tr><td>Documentation updates take days</td><td>Documentation updates happen in minutes</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- END-TO-END WORKFLOW -->
+<h2>End-to-End Workflow — Release Documentation</h2>
+<p>What happens automatically the moment a release tag is pushed:</p>
+
+<div class="flow">
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot"></div><div class="flow-line"></div></div>
+    <div class="flow-content"><div class="flow-title">Trigger — Git tag pushed (e.g. <code>v2.1.0</code>)</div><div class="flow-desc">Orchestration engine detects the new tag and initiates the documentation workflow</div></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot"></div><div class="flow-line"></div></div>
+    <div class="flow-content"><div class="flow-title">changelog-automator runs</div><div class="flow-desc">Parses commits between v2.0.0 and v2.1.0 · Outputs structured CHANGELOG.md grouped by type</div></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot"></div><div class="flow-line"></div></div>
+    <div class="flow-content"><div class="flow-title">openapi-docs-generator + docstring-extractor run in parallel</div><div class="flow-desc">API reference and SDK documentation generated from the v2.1.0 tag simultaneously</div></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot gate"></div><div class="flow-line"></div></div>
+    <div class="flow-content"><div class="flow-title">Quality validation gate</div><div class="flow-desc">Broken link check · Metadata completeness · AI confidence scoring (0–100%)</div></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot human"></div><div class="flow-line"></div></div>
+    <div class="flow-content"><div class="flow-title">Human review — if confidence &lt; 90%</div><div class="flow-desc">Technical writer reviews flagged sections · Approves or edits · Republishes</div></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot pub"></div><div class="flow-line"></div></div>
+    <div class="flow-content"><div class="flow-title">Publish to Confluence (v2.1 space) + GitHub</div><div class="flow-desc">All docs versioned, labelled <code>ai-generated</code>, and tagged with ownership metadata</div></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-left"><div class="flow-dot"></div></div>
+    <div class="flow-content"><div class="flow-title">Notify <code>#releases</code> — "Docs published ✅"</div><div class="flow-desc">Stakeholders informed automatically · Zero manual coordination required</div></div>
+  </div>
+</div>
+
+
+<!-- GOVERNANCE -->
+<h2>Governance &amp; Standards</h2>
+
+<h3>Governance Workflow for AI-Generated Content</h3>
+<div class="gov-flow">  Code Change (Git)
+        │
+        ▼
+  Agentic Skill Triggered
+  – Extracts metadata
+  – Generates content
+  – Applies templates
+        │
+        ▼
+  Quality Validation
+  – Broken link check
+  – Metadata completeness
+  – AI confidence score
+        │
+        ├── PASS (confidence > 90%) ──► Publish to Confluence (auto)
+        │
+        └── FAIL or LOW CONFIDENCE ──► Human Review Required
+                                              │
+                                              ├── Approve → Publish
+                                              └── Edit   → Republish</div>
+
+<h3>Governance Policies</h3>
+<table>
+  <thead><tr><th>Policy</th><th>Description</th><th>Enforcement</th><th>Applies To</th></tr></thead>
+  <tbody>
+    <tr><td><strong>AI-Generated Content Labelling</strong></td><td>All AI-generated docs tagged with <code>ai-generated</code> label</td><td>Auto-applied on publish</td><td>Generated docs</td></tr>
+    <tr><td><strong>Human Review for Low Confidence</strong></td><td>If AI confidence &lt; 90%, escalate to human</td><td>Orchestration workflow blocks publish</td><td>Generated docs</td></tr>
+    <tr><td><strong>Code–Docs Sync</strong></td><td>API docs must match OpenAPI spec version</td><td>Validation skill compares spec to published docs</td><td>API reference</td></tr>
+    <tr><td><strong>Docstring Completeness</strong></td><td>Functions/classes without docstrings flagged in PRs</td><td>Pre-commit hooks, CI/CD linting</td><td>SDK codebases</td></tr>
+    <tr><td><strong>Freshness SLA</strong></td><td>Critical docs reviewed every 6 months</td><td>Agent flags pages exceeding threshold</td><td>All Confluence pages</td></tr>
+    <tr><td><strong>Metadata Completeness</strong></td><td>All pages must have owner, status, version tags</td><td>Agent creates remediation tickets</td><td>All documentation</td></tr>
+    <tr><td><strong>Version Labelling</strong></td><td>Each doc version tagged (e.g. <code>v2.1.0</code>)</td><td>Auto-applied by version-manager</td><td>Generated docs</td></tr>
+    <tr><td><strong>Archival Policy</strong></td><td>Deprecated versions archived after 1 year</td><td>Agent proposes, owner approves</td><td>Old version docs</td></tr>
+  </tbody>
+</table>
+
+<h3>Ownership Model</h3>
+<ul>
+  <li><strong>Engineering</strong> — owns the source: docstrings, OpenAPI specs, Conventional Commits, architectural annotations</li>
+  <li><strong>Technical Writing Lead</strong> — owns the pipeline: governance rules, quality gates, publishing standards, and editorial oversight of AI outputs</li>
+  <li><strong>Product</strong> — owns the narrative: use cases, customer-facing guides, onboarding flows, and business-context documentation that AI cannot generate from code alone</li>
+</ul>
+
+
+<!-- RISKS -->
+<h2>Risks &amp; Mitigation</h2>
+
+<div class="risk-grid">
+
+  <div class="risk-item">
+    <div class="risk-top"><div class="risk-title">AI Hallucinations in Generated Documentation</div><span class="badge badge-critical">Critical — High Impact</span></div>
+    <div class="risk-mitigation">
+      <p>Customers integrate based on wrong documentation, causing production incidents.</p>
+      <ul>
+        <li><strong>Validation layer:</strong> Every AI-generated doc validated against source (OpenAPI spec, actual code)</li>
+        <li><strong>Confidence scoring:</strong> AI outputs a score (0–100%); below 90% triggers mandatory human review</li>
+        <li><strong>Human-in-the-loop:</strong> Technical writers review all generated docs before first publish</li>
+        <li><strong>Automated testing:</strong> Generated code examples run in CI/CD to verify they execute correctly</li>
+        <li><strong>Feedback loop:</strong> Support tickets mentioning docs are tracked to flag problematic pages</li>
+      </ul>
+    </div>
+    <div class="risk-owner">Responsible: Documentation Infrastructure Engineer + Technical Writing Lead</div>
+  </div>
+
+  <div class="risk-item">
+    <div class="risk-top"><div class="risk-title">Incorrect or Outdated Auto-Generated Text</div><span class="badge badge-critical">Critical — High Impact</span></div>
+    <div class="risk-mitigation">
+      <ul>
+        <li><strong>Version pinning:</strong> Skills generate docs from specific Git tags, not moving branches</li>
+        <li><strong>Staleness detection:</strong> Governance skill flags docs not refreshed within SLA threshold</li>
+        <li><strong>Change detection:</strong> Source code changes trigger automatic documentation regeneration</li>
+        <li><strong>Diff reviews:</strong> Human reviewers see a clear diff of what changed between doc versions</li>
+      </ul>
+    </div>
+    <div class="risk-owner">Responsible: Documentation Infrastructure Engineer</div>
+  </div>
+
+  <div class="risk-item">
+    <div class="risk-top"><div class="risk-title">Sensitive Information Leakage</div><span class="badge badge-critical">Critical — Security Breach Risk</span></div>
+    <div class="risk-mitigation">
+      <ul>
+        <li><strong>Secret scanning:</strong> Pre-publish validation scans for API keys, passwords, internal URLs</li>
+        <li><strong>Redaction lists:</strong> Maintained list of sensitive terms filtered before publish</li>
+        <li><strong>Access controls:</strong> Generated docs published to internal Confluence first; manually promoted to public</li>
+        <li><strong>Audit trails:</strong> Full log of all publications — who approved, what was published, when</li>
+        <li><strong>Engineer awareness:</strong> Guidelines on avoiding sensitive content in annotations covered in engineer training programme (cross-referenced with Section 5.2)</li>
+      </ul>
+    </div>
+    <div class="risk-owner">Responsible: Security Team + Technical Writing Lead</div>
+  </div>
+
+  <div class="risk-item">
+    <div class="risk-top"><div class="risk-title">Engineers Reject New Workflow</div><span class="badge badge-high">High Impact</span></div>
+    <div class="risk-mitigation">
+      <p>Without quality code comments, AI-generated documentation will be poor quality.</p>
+      <ul>
+        <li><strong>Incentives:</strong> Teams with best documentation recognised in engineering reviews</li>
+        <li><strong>Tooling:</strong> GitHub Copilot reduces friction for writing docstrings</li>
+        <li><strong>Enforcement:</strong> Code review checkpoints require docstrings for all new functions</li>
+        <li><strong>Showcase value:</strong> Demonstrate how good docstrings reduce the team's own support burden</li>
+        <li><strong>Gradual rollout:</strong> Start with willing pilot teams; expand based on demonstrated success</li>
+      </ul>
+    </div>
+    <div class="risk-owner">Responsible: Engineering Leadership + Technical Writing Lead</div>
+  </div>
+
+  <div class="risk-item">
+    <div class="risk-top"><div class="risk-title">Over-Reliance on Automation</div><span class="badge badge-medium">Medium Impact</span></div>
+    <div class="risk-mitigation">
+      <ul>
+        <li><strong>Hybrid model:</strong> Writers maintain manual documentation capability for conceptual guides and tutorials</li>
+        <li><strong>Fallback procedures:</strong> Documented manual processes activated if automation infrastructure fails</li>
+        <li><strong>Skills preservation:</strong> Training programme includes manual authoring best practices</li>
+        <li><strong>Redundancy:</strong> All critical documentation backed up in Git</li>
+      </ul>
+    </div>
+    <div class="risk-owner">Responsible: Technical Writing Lead</div>
+  </div>
+
+  <div class="risk-item">
+    <div class="risk-top"><div class="risk-title">Documentation Bloat</div><span class="badge badge-medium">Medium Impact</span></div>
+    <div class="risk-mitigation">
+      <ul>
+        <li><strong>Public vs private filtering:</strong> Only public APIs documented by default; internal utility functions excluded</li>
+        <li><strong>Relevance scoring:</strong> AI scores document relevance; only high-value content published</li>
+        <li><strong>Hierarchical structure:</strong> Organised by use case, not by code structure</li>
+        <li><strong>Search optimisation:</strong> Investment in Confluence search improvements and tagging strategy alongside generation rollout</li>
+      </ul>
+    </div>
+    <div class="risk-owner">Responsible: Technical Writing Lead</div>
+  </div>
+
+</div>
+
+
+<!-- ROADMAP -->
+<h2>Implementation Roadmap — 12 Months</h2>
+
+<div class="roadmap">
+  <div class="phase phase-1">
+    <div class="phase-header">Phase 1 — Foundation &amp; Pilot</div>
+    <div class="phase-body">
+      <div class="phase-months">Months 1–3</div>
+      <ul>
+        <li>Build core agentic skills (openapi, docstring, changelog)</li>
+        <li>Pilot with 1–2 willing engineering teams</li>
+        <li>Establish Git workflow for technical writers</li>
+        <li>Validate governance model end-to-end</li>
+      </ul>
+      <div class="phase-success"><strong>Success:</strong> AI docs rated 7/10 by pilot · 50% reduction in manual API doc time · Zero critical errors in generated docs</div>
+    </div>
+  </div>
+  <div class="phase phase-2">
+    <div class="phase-header">Phase 2 — Expansion &amp; Governance</div>
+    <div class="phase-body">
+      <div class="phase-months">Months 4–6</div>
+      <ul>
+        <li>Scale to additional engineering teams</li>
+        <li>Implement full governance layer</li>
+        <li>Launch writer training programme</li>
+        <li>Deploy schema-documenter</li>
+      </ul>
+      <div class="phase-success"><strong>Success:</strong> 70% API docs auto-generated · Internal doc questions −30% · Writers proficient in Git</div>
+    </div>
+  </div>
+  <div class="phase phase-3">
+    <div class="phase-header">Phase 3 — Production Rollout</div>
+    <div class="phase-body">
+      <div class="phase-months">Months 7–9</div>
+      <ul>
+        <li>Full production rollout across all teams</li>
+        <li>Version-aware strategy live</li>
+        <li>Feature flag documentation enabled</li>
+        <li>Stabilise operations and SLAs</li>
+      </ul>
+      <div class="phase-success"><strong>Success:</strong> 90% reference docs auto-generated · Zero infrastructure-caused incidents</div>
+    </div>
+  </div>
+  <div class="phase phase-4">
+    <div class="phase-header">Phase 4 — Optimisation &amp; Innovation</div>
+    <div class="phase-body">
+      <div class="phase-months">Months 10–12</div>
+      <ul>
+        <li>Measure and report full ROI</li>
+        <li>Explore architecture-explainer skill</li>
+        <li>Writers fully operating as Doc Engineers</li>
+        <li>Advanced capability exploration</li>
+      </ul>
+      <div class="phase-success"><strong>Success:</strong> Doc questions &lt;15/week · Onboarding 2–3 months · 5/5 writers Git-proficient · Engineering satisfaction +30%</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- KPIs -->
+<h2>Success Metrics (KPIs)</h2>
+
+<table>
+  <thead><tr><th>Metric</th><th>Baseline</th><th>Target — Month 12</th><th>Measurement Method</th></tr></thead>
+  <tbody>
+    <tr><td>% API Docs Auto-Generated</td><td>0%</td><td class="kpi-delta">90%</td><td>Count pages auto-generated vs manually written</td></tr>
+    <tr><td>Documentation Freshness Score</td><td>73%</td><td class="kpi-delta">95%</td><td>% of pages updated within freshness SLA</td></tr>
+    <tr><td>Internal Documentation Questions</td><td>40+/week</td><td class="kpi-delta">&lt;15/week</td><td>Track docs-related Slack threads</td></tr>
+    <tr><td>New Joiner Onboarding Time</td><td>1–6 months</td><td class="kpi-delta">2–3 months</td><td>Time to first productive contribution</td></tr>
+    <tr><td>Engineering Team Satisfaction</td><td>Baseline survey</td><td class="kpi-delta">+30% improvement</td><td>Quarterly developer satisfaction survey</td></tr>
+    <tr><td>Documentation Coverage</td><td>60%</td><td class="kpi-delta">95%</td><td>% of APIs with complete reference docs</td></tr>
+    <tr><td>Manual Docs Effort (hrs/week)</td><td>72 hrs/week</td><td class="kpi-delta">15 hrs/week</td><td>Time tracking by technical writers</td></tr>
+    <tr><td>Knowledge Gap Incidents</td><td>15/quarter</td><td class="kpi-delta">&lt;5/quarter</td><td>Track "Why was this built this way?" escalations</td></tr>
+    <tr><td>Technical Writer Git Proficiency</td><td>0/5 proficient</td><td class="kpi-delta">5/5 proficient</td><td>Skills assessment completion</td></tr>
+    <tr><td>AI-Generated Doc Accuracy</td><td>N/A</td><td class="kpi-delta">&gt;95%</td><td>Validation script: compare spec to published docs</td></tr>
+  </tbody>
+</table>
+
+
+<hr class="section-divider">
+
+<!-- APPENDIX A -->
+<h2>Appendix A — Full Agentic Skills Reference</h2>
+
+<h3>Generation Skills (New)</h3>
+<table>
+  <thead><tr><th>Skill</th><th>Purpose</th><th>Inputs</th><th>Outputs</th><th>Priority</th></tr></thead>
+  <tbody>
+    <tr><td><code>openapi-docs-generator</code></td><td>Generate API reference from OpenAPI spec</td><td>openapi.yaml, target version</td><td>API reference docs</td><td>P1</td></tr>
+    <tr><td><code>docstring-extractor</code></td><td>Generate SDK docs from code docstrings</td><td>Repository URL, language, version</td><td>SDK reference documentation</td><td>P1</td></tr>
+    <tr><td><code>changelog-automator</code></td><td>Generate release notes from Git commits</td><td>Repository, version range</td><td>CHANGELOG.md, release notes</td><td>P1</td></tr>
+    <tr><td><code>schema-documenter</code></td><td>Generate data model docs from DB migrations</td><td>Migration files, database name</td><td>ER diagrams, table docs</td><td>P2</td></tr>
+    <tr><td><code>version-manager</code></td><td>Maintain multi-version documentation</td><td>Git tags, version strategy</td><td>Version-specific doc sets</td><td>P2</td></tr>
+    <tr><td><code>feature-flag-documenter</code></td><td>Document feature availability per environment</td><td>Feature flag config, environment</td><td>Feature availability matrix</td><td>P3</td></tr>
+    <tr><td><code>architecture-explainer</code></td><td>Generate system design docs from code structure</td><td>Repository, architectural annotations</td><td>System architecture docs</td><td>P3</td></tr>
+  </tbody>
+</table>
+
+<h3>Governance Skills (Existing)</h3>
+<table>
+  <thead><tr><th>Skill</th><th>Purpose</th><th>Inputs</th><th>Outputs</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td><code>confluence-freshness-audit</code></td><td>Scan pages for staleness</td><td>Confluence space, age threshold</td><td>Freshness report</td><td>✅ Implemented</td></tr>
+    <tr><td><code>broken-link-detector</code></td><td>Validate all links in documentation</td><td>Confluence space(s)</td><td>Broken link report</td><td>P2</td></tr>
+    <tr><td><code>missing-metadata-enforcer</code></td><td>Flag pages missing required metadata</td><td>Required fields, target spaces</td><td>Metadata compliance report</td><td>P2</td></tr>
+    <tr><td><code>confluence-backup-manager</code></td><td>Export Confluence to GitHub for backups</td><td>Confluence space</td><td>Markdown files in Git repo</td><td>P3</td></tr>
+  </tbody>
+</table>
+
+
+<!-- APPENDIX B -->
+<h2>Appendix B — Technical Glossary</h2>
+<p>Key concepts referenced in this business case, grouped by domain:</p>
+
+<table>
+  <thead><tr><th>Domain</th><th>Concepts</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Agentic Skills</strong></td><td>OpenAPI/Swagger, Docstrings, Conventional Commits, Agentic pipelines</td></tr>
+    <tr><td><strong>Version Control</strong></td><td>Git workflows, branching strategies, pull requests, Git tags</td></tr>
+    <tr><td><strong>APIs &amp; Integration</strong></td><td>Confluence REST API, MCP (Model Context Protocol)</td></tr>
+    <tr><td><strong>Orchestration</strong></td><td>Temporal, Apache Airflow, DAG-based workflows, event-driven triggers</td></tr>
+    <tr><td><strong>Documentation Standards</strong></td><td>Semantic Versioning, Feature Flags, ER Diagrams, Conventional Commits</td></tr>
+    <tr><td><strong>AI Concepts</strong></td><td>Hallucinations, Confidence Scoring, Human-in-the-Loop, Validation layers</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Reference</div>
+  <p>For full technical definitions of all tools, libraries, and concepts referenced in this business case, see the accompanying <code>my-explanation.md</code> document.</p>
+</div>
+
+
+<div class="doc-footer">
+  <span>WebBeds — AI-Powered Documentation Operating Model · Business Case · Technical Writing Lead</span>
+  <span>Confidential — Internal Use Only · February 2026</span>
+</div>
+
+</body>
+</html>
