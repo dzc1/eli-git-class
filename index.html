@@ -165,6 +165,13 @@
     .roadmap, .training-phases { grid-template-columns: repeat(2, 1fr); }
     pre { white-space: pre-wrap; }
   }
+
+  /* Password Protection */
+  .content-blur {
+    filter: blur(8px);
+    pointer-events: none;
+    user-select: none;
+  }
 </style>
 </head>
 <body>
@@ -787,6 +794,29 @@ fixed stuff</code></pre>
   <span>WebBeds — AI-Powered Documentation Operating Model · Business Case · Technical Writing Lead</span>
   <span>Confidential — Internal Use Only · February 2026</span>
 </div>
+
+<script>
+  // Password protection with browser prompt
+  const CORRECT_PASSWORD = '2026';
+  
+  // Blur content on load
+  document.body.classList.add('content-blur');
+  
+  // Prompt for password
+  function checkPassword() {
+    const password = prompt('🔒 This content is protected. Please enter the password:');
+    
+    if (password === CORRECT_PASSWORD) {
+      document.body.classList.remove('content-blur');
+    } else if (password !== null) {
+      alert('Incorrect password. Please try again.');
+      checkPassword();
+    }
+  }
+  
+  // Run on page load
+  window.addEventListener('load', checkPassword);
+</script>
 
 </body>
 </html>
